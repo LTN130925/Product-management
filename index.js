@@ -52,5 +52,4 @@ app.listen(port, () => {
   console.log(`App listening on port ${port}...`);
 });
 
-// cập nhật ở đây
 
