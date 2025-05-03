@@ -1,0 +1,9 @@
+mixin sortItem(prefixAdmin)
+  select(
+    id="change-sort"
+    class="form-control"
+    onchange="updateQueryParams('sort', this.value)"
+  )
+    option(disabled selected) -- sắp xếp --
+    option(value="desc") Giảm dần
+    option(value="asc") Tăng dần
