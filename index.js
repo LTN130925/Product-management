@@ -19,7 +19,7 @@ const port = process.env.PORT;
 
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 
-app.set("views", "./views");
+app.set("views", `./${__dirname}views`);
 app.set("view engine", "pug");
 
 // Flash message
@@ -40,16 +40,14 @@ app.use(flash());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded());
 
-app.use(express.static("public"));
+app.use(express.static(`${__dirname}/public`));
 
 app.use(methodOverride("_method"));
 
 // Routes
 routeClient(app);
-routeAdmin(app); 
+routeAdmin(app);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}...`);
 });
-
-
