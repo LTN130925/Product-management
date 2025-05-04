@@ -3,6 +3,7 @@ const Product = require("../../models/product.model");
 const filterStatusHelper = require("../../helper/filterStatus");
 const searchHelper = require("../../helper/search");
 const paginationHelper = require("../../helper/pagination");
+const filterSort = require("../../helper/filterSort");
 
 const systemConfig = require("../../config/system");
 
@@ -31,8 +32,10 @@ module.exports.index = async (req, res) => {
     countProduct
   );
 
+  const views = filterSort(req.query);
+
   const products = await Product.find(find)
-    .sort({ position: req.query.sort || "desc" })
+    .sort(views)
     .limit(objectPagination.limitItem)
     .skip(objectPagination.skip);
 
@@ -345,14 +348,17 @@ module.exports.detail = async (req, res) => {
   let find = {
     _id: req.params.id,
     deleted: false,
-  }
+  };
 
   const product = await Product.findOne(find);
 
-  product.newPrice = ((product.price * (100 - product.discountPercentage)) / 100).toFixed(2);
+  product.newPrice = (
+    (product.price * (100 - product.discountPercentage)) /
+    100
+  ).toFixed(2);
 
   res.render("admin/pages/product/detail", {
-    titlePage: product.title, 
+    titlePage: product.title,
     product: product,
   });
-}
+};
