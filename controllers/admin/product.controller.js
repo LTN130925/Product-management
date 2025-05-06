@@ -99,10 +99,6 @@ module.exports.createPost = async (req, res) => {
     objectBody.position = +objectBody.position;
   }
 
-  if (req.file) {
-    objectBody.thumbnail = `/uploads/${req.file.filename}`;
-  }
-
   const products = new Product(objectBody);
   await products.save();
 

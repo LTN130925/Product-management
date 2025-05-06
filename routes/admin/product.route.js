@@ -1,13 +1,12 @@
 const express = require("express");
 const multer = require("multer");
 
-const storageMulter = require("../../helper/storageMulter");
-const validate = require("../../validates/admin/product.validate");
-
-const upload = multer({ storage: storageMulter() });
-
 const route = express.Router();
 
+const upload = multer();
+
+const middleware = require("../../middlewares/admin/uploadCloudinary.middleware");
+const validate = require("../../validates/admin/product.validate");
 const controllerProduct = require("../../controllers/admin/product.controller");
 
 // Product page
@@ -31,6 +30,7 @@ route.get("/create", controllerProduct.create);
 route.post(
   "/create",
   upload.single("thumbnail"),
+  middleware.uploadCloudinary,
   validate.createPost,
   controllerProduct.createPost
 );
