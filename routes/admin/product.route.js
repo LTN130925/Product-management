@@ -44,6 +44,7 @@ route.get("/edit/:id", controllerProduct.edit);
 route.patch(
   "/edit/:id",
   upload.single("thumbnail"),
+  middleware.uploadCloudinary,
   validate.createPost,
   controllerProduct.editPatch
 );

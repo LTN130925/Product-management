@@ -144,10 +144,6 @@ module.exports.editPatch = async (req, res) => {
 
   objectBody.position = body.position === "" ? 0 : +objectBody.position;
 
-  if (req.file) {
-    objectBody.thumbnail = `/uploads/${req.file.filename}`;
-  }
-
   try {
     await Product.updateOne(
       {
