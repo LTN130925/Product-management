@@ -25,6 +25,14 @@ block main
         .col-6  
           +search(keyword)
 
+  .card.mb-3 
+    .card-header Sắp xếp
+    .card-body
+      .row
+        .col-2
+          +sortItem()
+
+
   .card.mb-3
     .card-header Danh sách 
       .card-body
@@ -33,8 +41,6 @@ block main
             +form-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`, "delete-all")
             .ml-2
               +limitItem(prefixAdmin)
-            .ml-2 
-              +sortItem(prefixAdmin)
 
 
           .col-6.d-flex

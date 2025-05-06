@@ -1,25 +1,12 @@
 module.exports = (query) => {
-  const views = [
-    {
-      name: "desc",
-      position: "desc",
-    },
-    {
-      name: "asc",
-      position: "asc",
-    },
-    {
-      name: "nameaz",
-      title: "asc",
-    },
-  ];
+  let view = {
+    position: "desc",
+  };
 
-  let indexView = 0;
-  if (query.sort) {
-    indexView = views.findIndex((item) => item.name === query.sort);
+  if (query.sortkey && query.valuekey) {
+    delete view.position;
+    view[query.sortkey] = query.valuekey;
   }
 
-  delete views[indexView].name;
-
-  return views[indexView];
+  return view;
 };

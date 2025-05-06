@@ -214,15 +214,45 @@ if (showAlert) {
 
 // End Show alert
 
-// updateQueryParams
+// Sort
 
-const updateQueryParams = (key, value) => {
-  const url = new URL(window.location.href);
-  url.searchParams.set(key, value);
-  window.location.href = url.href;
-};
+const sort = document.querySelector("[sort]");
 
-// End updateQueryParams
+if (sort) {
+  let url = new URL(window.location.href);
+  const sortSelect = sort.querySelector("[sort-select]");
+  const sortClear = sort.querySelector("[sort-clear]");
+
+  sortSelect.addEventListener("change", (e) => {
+    const [sortkey, valuekey] = e.target.value.split("-");
+
+    url.searchParams.set("sortkey", sortkey);
+    url.searchParams.set("valuekey", valuekey);
+
+    window.location.href = url.href;
+  });
+
+  sortClear.addEventListener("click", () => {
+    url.searchParams.delete("sortkey");
+    url.searchParams.delete("valuekey");
+
+    window.location.href = url.href;
+  });
+
+  const sortkey = url.searchParams.get("sortkey");
+  const valuekey = url.searchParams.get("valuekey");
+
+  if (sortkey && valuekey) {
+    const stringValue = `${sortkey}-${valuekey}`;
+
+    const optionSeleted = sortSelect.querySelector(
+      `option[value='${stringValue}']`
+    );
+    optionSeleted.selected = true;
+  }
+}
+
+// End sort
 
 // Upload img
 
