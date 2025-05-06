@@ -279,3 +279,26 @@ if (uploadImg) {
 }
 
 // End upload img
+
+// updateLimit
+
+const updateLimit = document.querySelector("#change-limitItem");
+
+if (updateLimit) {
+  let url = new URL(window.location.href);
+
+  updateLimit.addEventListener("change", (e) => {
+    const valueLimit = e.target.value;
+
+    url.searchParams.set("limit", valueLimit);
+    window.location.href = url.href;
+  });
+
+  const valueLimit = url.searchParams.get("limit");
+  const selectedLimit = updateLimit.querySelector(
+    `option[value='${valueLimit}']`
+  );
+  selectedLimit.selected = true;
+}
+
+// End updateLimit
