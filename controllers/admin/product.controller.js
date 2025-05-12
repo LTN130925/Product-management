@@ -40,7 +40,7 @@ module.exports.index = async (req, res) => {
     .skip(objectPagination.skip);
 
   res.render("admin/pages/product/index", {
-    pageTitle: "Trang sản phẩm",
+    pageTitle: "Trang quản lý sản phẩm",
     products: products,
     filterStatus: filterStatus,
     keyword: objectSearch.keyword,
