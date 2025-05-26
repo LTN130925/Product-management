@@ -15,7 +15,7 @@ block main
         i(class="fas fa-arrow-left")
 
   .card.mb-3
-    .card-header Tạo mới sản phẩm    
+    .card-header Tạo mới sản phẩm
     .card-body
       form(
         action=`${prefixAdmin}/products/create`
@@ -36,7 +36,7 @@ block main
         div(class="form-group")
           label(for="desc") Mô tả
           textarea(
-            class="form-control",
+            class="form-control textarea-mce",
             id="desc",
             name="description",
             rows="5"

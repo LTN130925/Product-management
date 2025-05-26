@@ -9,12 +9,6 @@
   max-width: 100%;
 }
 
-.logo {
-  width: 50px;
-  object-fit: cover;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-}
-
 .header .inner-menu > ul {
   list-style: none;
   padding: 0;

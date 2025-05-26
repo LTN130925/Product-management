@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const flash = require("express-flash");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const path = require("path");
 
 const systemConfig = require("./config/system");
 const database = require("./config/database");
@@ -37,10 +38,17 @@ app.use(flash());
 
 // End flash message
 
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded());
 
 app.use(express.static(`${__dirname}/public`));
+
+// TyniMCE
+
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
+
+// End tyniMCE
 
 app.use(methodOverride("_method"));
 
