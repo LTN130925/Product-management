@@ -227,7 +227,7 @@ module.exports.permanentlyDelete = async (req, res) => {
   res.redirect(req.get("Referrer") || "/");
 };
 
-// [PATCh] /admin/products/trashCan/change-status/:status/:id
+// [PATCH] /admin/products/trashCan/change-status/:status/:id
 // [PATCH] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
   const objectParams = {

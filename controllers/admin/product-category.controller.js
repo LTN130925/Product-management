@@ -1,29 +1,38 @@
 const ProductsCategory = require('../../models/product-category.model');
-const systemConfig = require('../../config/system');
-const Product = require("../../models/product.model");
 
-// [GET] /product-category
+const helperCreateTree = require('../../helper/create-tree');
+const createTree = helperCreateTree.createTree;
+const systemConfig = require('../../config/system');
+
+// [GET] admin/product-category
 module.exports.index = async (req, res) => {
   const find = {
     deleted: false,
   };
-
   const record = await ProductsCategory.find(find);
+  const newRecord = helperCreateTree.tree(record)
 
   res.render('admin/pages/product-category/index', {
     titlePage: 'Danh mục sản phẩm',
-    record: record,
+    records: newRecord,
   });
 };
 
-// [GET] /product-category/create
-module.exports.create = (req, res) => {
+// [GET] admin/product-category/create
+module.exports.create = async (req, res) => {
+  const find = {
+    deleted: false,
+  };
+  const record = await ProductsCategory.find(find);
+  const newRecord = helperCreateTree.tree(record);
+
   res.render('admin/pages/product-category/create', {
     titlePage: 'Tạo bản ghi danh mục',
+    records: newRecord,
   });
 };
 
-// [POST] /product-category/create
+// [POST] admin/product-category/create
 module.exports.createPost = async (req, res) => {
   const body = req.body;
 
@@ -36,8 +45,8 @@ module.exports.createPost = async (req, res) => {
     position: body.position,
   };
 
-  if (objectBody.position === "") {
-    const countProduct = await Product.countDocuments();
+  if (objectBody.position === '') {
+    const countProduct = await ProductsCategory.countDocuments();
     const count = countProduct + 1;
     objectBody.position = count;
   } else {
