@@ -47,14 +47,14 @@ if (formSearch) {
 
 // Pagination-Page
 
-const paginationButton = document.querySelectorAll("[button-pagination.js]");
+const paginationButton = document.querySelectorAll("[button-pagination]");
 
 if (paginationButton) {
   let url = new URL(window.location.href);
 
   paginationButton.forEach((button) => {
     button.addEventListener("click", () => {
-      const page = button.getAttribute("button-pagination.js");
+      const page = button.getAttribute("button-pagination");
       url.searchParams.set("page", page);
 
       window.location.href = url.href;
