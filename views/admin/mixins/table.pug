@@ -1,5 +1,5 @@
-mixin table(records, level = 1)
-  each item, index in records
+mixin table(records, route, level = 1)
+  each item in records
     - const prefix = Array(level + 1).join('-- ')
     tr
       td
@@ -43,18 +43,25 @@ mixin table(records, level = 1)
             class="badge badge-danger"
           ) Dừng hoạt động
       td
-        a(
-          href=`${prefixAdmin}/products/detail/${item.id}`
-          class="btn btn-secondary btn-sm"
-        ) Chi tiết
-        a(
-          href=`${prefixAdmin}/products/edit/${item.id}`
-          class="btn btn-warning btn-sm"
-        ) Sửa
+        if route == 'trash'
+          button(
+            data-id=item.id
+            button-recovery-item
+            class="btn badge-success btn-sm"
+          ) Khôi phục
+        else
+          a(
+            href=`${prefixAdmin}/products-category/detail/${item.id}`
+            class="btn btn-secondary btn-sm"
+          ) Chi tiết
+          a(
+            href=`${prefixAdmin}/products-category/edit/${item.id}`
+            class="btn btn-warning btn-sm"
+          ) Sửa
         button(
           data-id=item.id
           button-delete-item
           class="btn btn-danger btn-sm ml-1"
         ) Xóa
     if item.children && item.children.length > 0
-      +table(item.children, level + 1)
+      +table(item.children, route, level + 1)

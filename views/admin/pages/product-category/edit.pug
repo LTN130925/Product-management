@@ -5,21 +5,22 @@ include ../../mixins/select-tree.pug
 
 block main
   +alert-error(5000)
+  +alert-success(5000)
 
-  h1(class="mb-4") Thêm mới danh mục sản phẩm
+  h1(class="mb-4") Cập nhật danh mục sản phẩm
 
     .col-6
       a(
-        href=`${prefixAdmin}/product-category`
+        href=`${prefixAdmin}/products-category`
         class="btn btn-outline-primary"
       )
         i(class="fas fa-arrow-left")
 
   .card.mb-3
-    .card-header Tạo mới danh mục sản phẩm
+    .card-header Cập nhật danh mục sản phẩm!
     .card-body
       form(
-        action=`${prefixAdmin}/products-category/create`
+        action=`${prefixAdmin}/products-category/edit/${records.id}?_method=PATCH`
         id="form-create-product"
         method="POST"
         enctype="multipart/form-data"
@@ -31,6 +32,7 @@ block main
             class="form-control",
             id="title",
             name="title",
+            value=records.title
             required
           )
 
@@ -43,7 +45,7 @@ block main
           )
             option(value='') --- lựa chọn danh mục ----
             if(records)
-              +select-tree(records, 'undefined')
+              +select-tree(recordTree, records.parent_id)
 
         div(class="form-group")
           label(for="desc") Mô tả
@@ -52,7 +54,8 @@ block main
             id="desc",
             name="description",
             rows="5"
-          )
+            value=records.description
+          ) #{records.description}
 
         div(
           class="form-group"
@@ -71,7 +74,7 @@ block main
             class="image-preview-wrapper"
           )
             img(
-              src="",
+              src=records.thumbnail,
               upload-image-preview,
               class="image-preview"
             )
@@ -90,6 +93,7 @@ block main
             name="position"
             placeholder="Tự động tăng"
             min="1"
+            value=records.position
           )
 
         div(class="form-group form-check form-check-inline")
@@ -99,7 +103,7 @@ block main
             id="statusActive"
             name="status"
             value="active"
-            checked
+            checked=(records.status == 'active' ? true : false)
           )
           label(for="statusActive" class="form-check-label") Hoạt động
 
@@ -110,6 +114,7 @@ block main
             id="statusInActive"
             name="status"
             value="inactive"
+            checked=(records.status == 'inactive' ? true : false)
           )
           label(for="statusInActive" class="form-check-label") Dừng hoạt động
 
@@ -120,11 +125,3 @@ block main
           ) Tạo mới
 
   script(src="/admin/js/product.js")
-
-
-
-
-
-
-
-
