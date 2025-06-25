@@ -156,7 +156,7 @@ module.exports.editPatch = async (req, res) => {
     req.flash("error", "cập nhật sản phẩm thất bại!");
   }
 
-  res.redirect(req.get("Referrer") || "/");
+  res.redirect(`${systemConfig.prefixAdmin}/products`);
 };
 
 // [GET] /admin/products/trashCan

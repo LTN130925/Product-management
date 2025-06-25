@@ -2,15 +2,13 @@ extends ../../layouts/default.pug
 
 include ../../mixins/filter-status.pug
 include ../../mixins/search.pug
-include ../../mixins/pagination.pug
 include ../../mixins/form-change-multi.pug
 include ../../mixins/alert.pug
-include ../../mixins/limitItem.pug
-include ../../mixins/sortItem.pug
 include ../../mixins/table.pug
 
 block main
   +alert-success(5000)
+  +alert-error(5000)
 
   h1 Thùng rác
 
@@ -39,9 +37,6 @@ block main
           .col-8
           .col-md-6.d-flex
             +form-change-multi(`${prefixAdmin}/products-category/trash/change-multi?_method=PATCH`, "permanentlyDelete-all")
-
-            .ml-2
-              +limitItem(prefixAdmin)
 
           .col-6.d-flex
             .ml-auto

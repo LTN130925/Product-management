@@ -47,11 +47,10 @@ module.exports.trash = async (req, res) => {
   }
 
   const record = await ProductsCategory.find(find);
-  const newRecord = helperCreateTree.tree(record);
 
   res.render('admin/pages/product-category/trash', {
     titlePage: 'Trang sản phẩm rác',
-    records: newRecord,
+    records: record,
     filterStatus: filterStatus,
     keyword: objectSearch.keyword,
   });
@@ -241,29 +240,27 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] admin/products-category/edit/:id
 module.exports.editPatch = async (req, res) => {
+  const body = req.body;
+
+  const objectBody = {
+    title: body.title,
+    parent_id: body.parent_id,
+    description: body.description,
+    thumbnail: body.thumbnail,
+    status: body.status,
+    position: body.position,
+  };
+
+  objectBody.position = body.position === "" ? 0 : +objectBody.position;
+
   try {
-    const body = req.body;
-    const id = req.params.id;
-
-    const objectBody = {
-      title: body.title,
-      parent_id: body.parent_id,
-      description: body.description,
-      thumbnail: body.thumbnail,
-      status: body.status,
-      position: body.position,
-    };
-
-    objectBody.position = body.position === "" ? 0 : +objectBody.position;
-
     await ProductsCategory.updateOne(
-      { _id: id },
+      { _id: req.params.id },
       objectBody
     );
     req.flash('success', 'Sửa danh mục thành công!');
-    res.redirect(req.get('Referrer') || '/');
   } catch (error) {
     req.flash('error', 'Danh mục không tồn tại!');
-    res.redirect(req.get('Referrer') || '/');
   }
+  res.redirect(`${systemConfig.prefixAdmin}/products-category`);
 }
