@@ -28,6 +28,7 @@ module.exports.index = async (req, res) => {
     titlePage: 'Danh mục sản phẩm',
     records: newRecord,
     filterStatus: filterStatus,
+    keyword: objectSearch.keyword
   });
 };
 
@@ -52,7 +53,7 @@ module.exports.trash = async (req, res) => {
     titlePage: 'Trang sản phẩm rác',
     records: record,
     filterStatus: filterStatus,
-    keyword: objectSearch.keyword,
+    keyword: objectSearch.keyword
   });
 };
 
