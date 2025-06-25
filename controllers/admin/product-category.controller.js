@@ -234,7 +234,7 @@ module.exports.edit = async (req, res) => {
     });
   } catch (error) {
     req.flash('error', 'Danh mục không tồn tại!');
-    res.redirect(req.get('Referrer') || '/');
+    res.redirect(`${systemConfig.prefixAdmin}/products-category`);
   }
 }
 
