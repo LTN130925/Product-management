@@ -1,9 +1,11 @@
 const Product = require("../../models/product.model");
+const ProductCategory = require("../../models/product-category.model");
 
 const filterStatusHelper = require("../../helper/filterStatus");
 const searchHelper = require("../../helper/search");
 const paginationHelper = require("../../helper/pagination");
 const filterSort = require("../../helper/filterSort");
+const createTreeHelper = require("../../helper/create-tree");
 
 const systemConfig = require("../../config/system");
 
@@ -70,9 +72,17 @@ module.exports.deleteItem = async (req, res) => {
 };
 
 // [GET] /admin/products/create
-module.exports.create = (req, res) => {
+module.exports.create = async (req, res) => {
+  const find = {
+    deleted: false,
+  };
+
+  const record = await ProductCategory.find(find);
+  const category = createTreeHelper.tree(record);
+
   res.render("admin/pages/product/create", {
     pageTitle: "Trang thêm mới sản phẩm",
+    category: category,
   });
 };
 
@@ -82,6 +92,7 @@ module.exports.createPost = async (req, res) => {
 
   const objectBody = {
     title: body.title,
+    product_category_id: body.product_category_id,
     description: body.description,
     price: +body.price,
     discountPercentage: +body.discountPercentage,
@@ -115,11 +126,14 @@ module.exports.edit = async (req, res) => {
       deleted: false,
     };
 
+    const productCategory = await ProductCategory.find({ deleted: false });
+    const category = createTreeHelper.tree(productCategory);
     const product = await Product.findOne(find);
 
     res.render("admin/pages/product/edit", {
       pageTitle: "Trang chỉnh sửa sản phẩm",
       product: product,
+      category: category,
     });
   } catch (error) {
     req.flash("error", "Lỗi id!");
@@ -133,6 +147,7 @@ module.exports.editPatch = async (req, res) => {
 
   const objectBody = {
     title: body.title,
+    product_category_id: body.product_category_id,
     description: body.description,
     price: +body.price,
     discountPercentage: +body.discountPercentage,
