@@ -5,7 +5,7 @@ block main
     h1(class="mb-4") #{record.title}
 
   if(record.parent_id == '')
-    h1(class='mb-4') danh mục cha
+    div(class='mb-4') danh mục cha
   else
     each item in category
       if (item.id == record.parent_id)
