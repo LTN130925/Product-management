@@ -199,9 +199,9 @@ module.exports.recovery = async (req, res) => {
 }
 
 // [DELETE] admin/products-category/trash/permanentlyDelete/:id
-module.exports.permanentDelete = (req, res) => {
+module.exports.permanentDelete = async (req, res) => {
   const id = req.params.id;
-  ProductsCategory.deleteOne({ _id: id });
+  await ProductsCategory.deleteOne({ _id: id });
   req.flash('success', 'xóa vĩnh viễn danh mục thành công!');
   res.redirect(req.get('Referrer') || '/');
 }

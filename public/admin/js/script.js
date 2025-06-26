@@ -160,10 +160,9 @@ if (formChangeMulti) {
 // Delete Item
 // permanentlyDelete
 
-const deleteItem = document.querySelector("[checkbox-multi]");
+const buttonItemDelete = document.querySelectorAll("[button-delete-item]");
 
-if (deleteItem) {
-  const buttonItemDelete = deleteItem.querySelectorAll("[button-delete-item]");
+if (buttonItemDelete.length > 0) {
   const formDeleteItem = document.querySelector("#form-delete-item");
 
   const path = formDeleteItem.getAttribute("data-path");
