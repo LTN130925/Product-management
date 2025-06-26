@@ -73,11 +73,10 @@ module.exports.editPatch = async (req, res) => {
   try {
     await Role.updateOne({ _id: req.params.id }, req.body);
     req.flash('success', 'Sửa thành công!');
-    res.redirect(`${systemConfig.prefixAdmin}/roles`);
   } catch (error) {
     req.flash('error', 'Lỗi!');
-    res.redirect(`${systemConfig.prefixAdmin}/roles`);
   }
+  res.redirect(req.get('Referrer') || '/');
 }
 
 // [DELETE] /admin/roles/permanent-delete/:id
