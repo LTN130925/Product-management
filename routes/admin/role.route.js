@@ -9,4 +9,10 @@ router.get('/create', roleController.create);
 
 router.post('/create', roleController.createPost);
 
+router.get('/detail/:id', roleController.detail);
+
+router.get('/edit/:id', roleController.edit);
+
+router.patch('/edit/:id', roleController.editPatch);
+
 module.exports = router;

@@ -35,3 +35,47 @@ module.exports.createPost = async (req, res) => {
   req.flash('success', 'tạo quyền thành công!');
   res.redirect(`${systemConfig.prefixAdmin}/roles`);
 }
+
+// [GET] /admin/detai/:id
+module.exports.detail = async (req, res) => {
+  const find = {
+    _id: req.params.id,
+    deleted: false
+  }
+  const record = await Role.findOne(find);
+  res.render("admin/pages/roles/detail", {
+    titlePage: 'Chi tiết quyền',
+    record: record,
+  })
+}
+
+// [GET] /admin/roles/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const find = {
+      _id: req.params.id,
+      deleted: false
+    }
+    const record = await Role.findOne(find);
+
+    res.render("admin/pages/roles/edit", {
+      titlePage: 'Sửa quyền',
+      record: record,
+    })
+  } catch (error) {
+    req.flash('error', 'ID tồn tại!');
+    res.redirect(`${systemConfig.prefixAdmin}/roles`);
+  }
+}
+
+// [PATCH] admin/roles/edit/:id
+module.exports.editPatch = async (req, res) => {
+  try {
+    await Role.updateOne({ _id: req.params.id }, req.body);
+    req.flash('success', 'Sửa thành công!');
+    res.redirect(`${systemConfig.prefixAdmin}/roles`);
+  } catch (error) {
+    req.flash('error', 'Lỗi!');
+    res.redirect(`${systemConfig.prefixAdmin}/roles`);
+  }
+}
