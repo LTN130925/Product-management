@@ -210,9 +210,13 @@ module.exports.permanentDelete = (req, res) => {
 module.exports.detail = async (req, res) => {
   const id = req.params.id;
   const record = await ProductsCategory.findOne({ _id: id });
+  const category = await ProductsCategory.find({ deleted: false });
+  const newCategory = helperCreateTree.tree(category);
+
   res.render('admin/pages/product-category/detail', {
     pageTitle: 'Chi tiết danh mục',
     record: record,
+    category: newCategory,
   });
 }
 

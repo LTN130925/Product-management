@@ -4,6 +4,14 @@ block main
   if(record.title)
     h1(class="mb-4") #{record.title}
 
+  if(record.parent_id == '')
+    h1(class='mb-4') danh mục cha
+  else
+    each item in category
+      if (item.id == record.parent_id)
+        div(class="mb-4") Danh mục cha: <b>#{item.title}</b>
+        break
+
   if (record.thumbnail)
     div(class="mb-4")
       img(
