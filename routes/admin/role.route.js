@@ -15,6 +15,6 @@ router.get('/edit/:id', roleController.edit);
 
 router.patch('/edit/:id', roleController.editPatch);
 
-router.delete('/permanent-delete/:id', roleController.delete);
+router.delete('/deleted/:id', roleController.delete);
 
 module.exports = router;
