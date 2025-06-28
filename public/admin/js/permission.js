@@ -3,6 +3,7 @@ const tablePermission = document.querySelector('[table-permission]');
 if (tablePermission) {
   const buttonSubmit = document.querySelector('[button-submit]');
   const dataTable = tablePermission.querySelectorAll('[data-name]');
+  const formControl = document.querySelector('[form-control]');
 
 
   buttonSubmit.addEventListener('click', () => {
@@ -11,22 +12,23 @@ if (tablePermission) {
     dataTable.forEach((item) => {
       const dataName = item.getAttribute('data-name');
       const inputs = item.querySelectorAll('input');
-      console.log(inputs);
       if (dataName === 'id') {
         inputs.forEach(input => {
           permission.push({
             id: input.value,
-            permission: []
+            permissions: []
           });
-        })
+        });
       } else {
         inputs.forEach((input, index) => {
           if (input.checked) {
-            permission[index].permission.push(dataName);
+            permission[index].permissions.push(dataName);
           }
         });
       }
     });
-    console.log(JSON.stringify(permission));
+    const getValue = formControl.querySelector('#permissions');
+    getValue.value = JSON.stringify(permission);
+    formControl.submit();
   });
 }

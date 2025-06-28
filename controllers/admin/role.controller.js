@@ -102,3 +102,20 @@ module.exports.permission = async (req, res) => {
     records: records,
   });
 }
+
+// [PATCH] admin/roles/permission
+module.exports.permissionPatch = async (req, res) => {
+  try {
+    const permissions = JSON.parse(req.body.permissions);
+    for (const item of permissions) {
+      await Role.updateOne(
+        { _id: item.id },
+        { permissions: item.permissions }
+      );
+    }
+    req.flash('success', 'Cập nhật thành công!');
+  } catch (error) {
+    req.flash('error', 'Lỗi!');
+  }
+  res.redirect(`${systemConfig.prefixAdmin}/roles`);
+}

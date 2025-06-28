@@ -22,7 +22,10 @@ block main
               th(class="text-center") #{item.title}
 
       tbody
-        tr(data-name='id')
+        tr(
+          class='d-none'
+          data-name='id'
+        )
           td
           each item in records
             td(class='text-center')
@@ -54,5 +57,23 @@ block main
           each item in records
             td(class="text-center")
               input(type="checkbox")
+
+    form(
+      action=`${prefixAdmin}/roles/permission?_method=PATCH`
+      method='POST'
+      form-control
+    )
+      input(
+        id='permissions'
+        name='permissions'
+        class='d-none'
+        value=''
+      )
+  else
+    p --không tồn tại bạn cần thêm phân quyền--
+    a(
+      href=`${prefixAdmin}/roles`
+      class='btn btn-outline-success'
+    ) + Thêm mới
 
   script(src='/admin/js/permission.js')
