@@ -89,3 +89,16 @@ module.exports.delete = async (req, res) => {
   req.flash('success', 'Xóa thành công!');
   res.redirect(`${systemConfig.prefixAdmin}/roles`);
 }
+
+// [GET] /admin/roles/permission
+module.exports.permission = async (req, res) => {
+  const find = {
+    deleted: false,
+  };
+
+  const records = await Role.find(find);
+  res.render("admin/pages/roles/permission", {
+    titlePage: 'Phân quyền',
+    records: records,
+  });
+}

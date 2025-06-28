@@ -7,8 +7,9 @@ const createTree = (data, parent_id = '') => {
       const newItem = item;
       newItem.index = cnt;
       const children = createTree(data, item.id);
-      if (children.length > 0)
+      if (children.length > 0) {
         newItem.children = children;
+      }
       tree.push(newItem);
     }
   });

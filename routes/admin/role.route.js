@@ -17,4 +17,6 @@ router.patch('/edit/:id', roleController.editPatch);
 
 router.delete('/deleted/:id', roleController.delete);
 
+router.get('/permission', roleController.permission);
+
 module.exports = router;
