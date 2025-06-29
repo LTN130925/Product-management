@@ -5,7 +5,6 @@ if (tablePermission) {
   const dataTable = tablePermission.querySelectorAll('[data-name]');
   const formControl = document.querySelector('[form-control]');
 
-
   buttonSubmit.addEventListener('click', () => {
     const permission = [];
 
@@ -13,10 +12,10 @@ if (tablePermission) {
       const dataName = item.getAttribute('data-name');
       const inputs = item.querySelectorAll('input');
       if (dataName === 'id') {
-        inputs.forEach(input => {
+        inputs.forEach((input) => {
           permission.push({
             id: input.value,
-            permissions: []
+            permissions: [],
           });
         });
       } else {

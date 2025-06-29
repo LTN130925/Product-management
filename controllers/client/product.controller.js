@@ -1,13 +1,13 @@
-const Product = require("../../models/product.model");
+const Product = require('../../models/product.model');
 
 // [GET] /products
 module.exports.index = async (req, res) => {
   let find = {
-    status: "active",
+    status: 'active',
     deleted: false,
   };
 
-  const products = await Product.find(find).sort({ position: "desc" });
+  const products = await Product.find(find).sort({ position: 'desc' });
 
   const newProduct = products.map((item) => {
     item.newPrice = (
@@ -17,8 +17,8 @@ module.exports.index = async (req, res) => {
     return item;
   });
 
-  res.render("client/pages/products/index", {
-    pageTitle: "Trang sản phẩm",
+  res.render('client/pages/products/index', {
+    pageTitle: 'Trang sản phẩm',
     products: newProduct,
   });
 };
@@ -27,7 +27,7 @@ module.exports.index = async (req, res) => {
 module.exports.detail = async (req, res) => {
   const find = {
     slug: req.params.slug,
-    status: "active",
+    status: 'active',
     deleted: false,
   };
 
@@ -38,7 +38,7 @@ module.exports.detail = async (req, res) => {
     100
   ).toFixed(2);
 
-  res.render("client/pages/products/detail", {
+  res.render('client/pages/products/detail', {
     pageTitle: product.title,
     product: product,
   });

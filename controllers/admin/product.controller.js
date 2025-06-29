@@ -1,13 +1,13 @@
-const Product = require("../../models/product.model");
-const ProductCategory = require("../../models/product-category.model");
+const Product = require('../../models/product.model');
+const ProductCategory = require('../../models/product-category.model');
 
-const filterStatusHelper = require("../../helper/filterStatus");
-const searchHelper = require("../../helper/search");
-const paginationHelper = require("../../helper/pagination");
-const filterSort = require("../../helper/filterSort");
-const createTreeHelper = require("../../helper/create-tree");
+const filterStatusHelper = require('../../helper/filterStatus');
+const searchHelper = require('../../helper/search');
+const paginationHelper = require('../../helper/pagination');
+const filterSort = require('../../helper/filterSort');
+const createTreeHelper = require('../../helper/create-tree');
 
-const systemConfig = require("../../config/system");
+const systemConfig = require('../../config/system');
 
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
@@ -41,8 +41,8 @@ module.exports.index = async (req, res) => {
     .limit(objectPagination.limitItem)
     .skip(objectPagination.skip);
 
-  res.render("admin/pages/product/index", {
-    pageTitle: "Trang quản lý sản phẩm",
+  res.render('admin/pages/product/index', {
+    pageTitle: 'Trang quản lý sản phẩm',
     products: products,
     filterStatus: filterStatus,
     keyword: objectSearch.keyword,
@@ -66,9 +66,9 @@ module.exports.deleteItem = async (req, res) => {
     }
   );
 
-  req.flash("success", "Xóa sản phẩm thành công!");
+  req.flash('success', 'Xóa sản phẩm thành công!');
 
-  res.redirect(req.get("Referrer") || "/");
+  res.redirect(req.get('Referrer') || '/');
 };
 
 // [GET] /admin/products/create
@@ -80,8 +80,8 @@ module.exports.create = async (req, res) => {
   const record = await ProductCategory.find(find);
   const category = createTreeHelper.tree(record);
 
-  res.render("admin/pages/product/create", {
-    pageTitle: "Trang thêm mới sản phẩm",
+  res.render('admin/pages/product/create', {
+    pageTitle: 'Trang thêm mới sản phẩm',
     category: category,
   });
 };
@@ -102,7 +102,7 @@ module.exports.createPost = async (req, res) => {
     position: body.position,
   };
 
-  if (objectBody.position === "") {
+  if (objectBody.position === '') {
     const countProduct = await Product.countDocuments();
     const count = countProduct + 1;
     objectBody.position = count;
@@ -113,7 +113,7 @@ module.exports.createPost = async (req, res) => {
   const products = new Product(objectBody);
   await products.save();
 
-  req.flash("success", "Tạo sản phẩm thành công!");
+  req.flash('success', 'Tạo sản phẩm thành công!');
 
   res.redirect(`${systemConfig.prefixAdmin}/products`);
 };
@@ -130,13 +130,13 @@ module.exports.edit = async (req, res) => {
     const category = createTreeHelper.tree(productCategory);
     const product = await Product.findOne(find);
 
-    res.render("admin/pages/product/edit", {
-      pageTitle: "Trang chỉnh sửa sản phẩm",
+    res.render('admin/pages/product/edit', {
+      pageTitle: 'Trang chỉnh sửa sản phẩm',
       product: product,
       category: category,
     });
   } catch (error) {
-    req.flash("error", "Lỗi id!");
+    req.flash('error', 'Lỗi id!');
     res.redirect(`${systemConfig.prefixAdmin}/products`);
   }
 };
@@ -157,7 +157,7 @@ module.exports.editPatch = async (req, res) => {
     position: body.position,
   };
 
-  objectBody.position = body.position === "" ? 0 : +objectBody.position;
+  objectBody.position = body.position === '' ? 0 : +objectBody.position;
 
   try {
     await Product.updateOne(
@@ -166,9 +166,9 @@ module.exports.editPatch = async (req, res) => {
       },
       objectBody
     );
-    req.flash("success", "cập nhật sản phẩm thành công!");
+    req.flash('success', 'cập nhật sản phẩm thành công!');
   } catch (error) {
-    req.flash("error", "cập nhật sản phẩm thất bại!");
+    req.flash('error', 'cập nhật sản phẩm thất bại!');
   }
 
   res.redirect(`${systemConfig.prefixAdmin}/products`);
@@ -203,8 +203,8 @@ module.exports.trash = async (req, res) => {
     .limit(objectPagination.limitItem)
     .skip(objectPagination.skip);
 
-  res.render("admin/pages/product/trashCanProducts", {
-    pageTitle: "Thùng rác sản phẩm",
+  res.render('admin/pages/product/trashCanProducts', {
+    pageTitle: 'Thùng rác sản phẩm',
     products: products,
     filterStatus: filterStatus,
     keyword: objectSearch.keyword,
@@ -222,9 +222,9 @@ module.exports.recovery = async (req, res) => {
 
   await Product.updateOne({ _id: id }, { deleted: false });
 
-  req.flash("success", "Khôi phục sản phẩm thành công!");
+  req.flash('success', 'Khôi phục sản phẩm thành công!');
 
-  res.redirect(req.get("Referrer") || "/");
+  res.redirect(req.get('Referrer') || '/');
 };
 
 // [DELETE] /admin/products/trashCan/permanentlyDelete/:id
@@ -237,9 +237,9 @@ module.exports.permanentlyDelete = async (req, res) => {
 
   await Product.deleteOne({ _id: id });
 
-  req.flash("success", "Xóa vĩnh viễn sản phẩm thành công!");
+  req.flash('success', 'Xóa vĩnh viễn sản phẩm thành công!');
 
-  res.redirect(req.get("Referrer") || "/");
+  res.redirect(req.get('Referrer') || '/');
 };
 
 // [PATCH] /admin/products/trashCan/change-status/:status/:id
@@ -254,51 +254,51 @@ module.exports.changeStatus = async (req, res) => {
 
   await Product.updateOne({ _id: id }, { status: status });
 
-  req.flash("success", "Cập nhật trạng thái sản phẩm thành công!");
+  req.flash('success', 'Cập nhật trạng thái sản phẩm thành công!');
 
-  res.redirect(req.get("Referrer") || "/");
+  res.redirect(req.get('Referrer') || '/');
 };
 
 // [PATCH] /admin/products/trashCan/change-multi
 // [PATCH] /admin/products/change-multi
 module.exports.changeMulti = async (req, res) => {
   const objectBody = {
-    id: req.body.ids.split(", "),
+    id: req.body.ids.split(', '),
     status: req.body.type,
   };
 
   const { id, status } = objectBody;
 
   switch (status) {
-    case "active":
+    case 'active':
       await Product.updateMany(
         { _id: { $in: id } },
         {
-          status: "active",
+          status: 'active',
         }
       );
 
       req.flash(
-        "success",
+        'success',
         `Cập nhật trang thái ${id.length} sản phẩm thành công!`
       );
 
       break;
-    case "inactive":
+    case 'inactive':
       await Product.updateMany(
         { _id: { $in: id } },
         {
-          status: "inactive",
+          status: 'inactive',
         }
       );
 
       req.flash(
-        "success",
+        'success',
         `Cập nhật trang thái ${id.length} sản phẩm thành công!`
       );
 
       break;
-    case "delete-all":
+    case 'delete-all':
       await Product.updateMany(
         { _id: { $in: id } },
         {
@@ -307,18 +307,18 @@ module.exports.changeMulti = async (req, res) => {
         }
       );
 
-      req.flash("success", `Xóa ${id.length} sản phẩm thành công!`);
+      req.flash('success', `Xóa ${id.length} sản phẩm thành công!`);
 
       break;
-    case "permanentlyDelete-all":
+    case 'permanentlyDelete-all':
       await Product.deleteMany({ _id: { $in: id } });
 
-      req.flash("success", `Xóa vĩnh viễn ${id.length} sản phẩm thành công!`);
+      req.flash('success', `Xóa vĩnh viễn ${id.length} sản phẩm thành công!`);
 
       break;
-    case "change-position":
+    case 'change-position':
       for (const item of id) {
-        let [id, position] = item.split("-");
+        let [id, position] = item.split('-');
         position = parseInt(position);
 
         await Product.updateOne(
@@ -329,10 +329,10 @@ module.exports.changeMulti = async (req, res) => {
         );
       }
 
-      req.flash("success", `Cập nhật vị trí ${id.length} sản phẩm thành công!`);
+      req.flash('success', `Cập nhật vị trí ${id.length} sản phẩm thành công!`);
 
       break;
-    case "recovery-all":
+    case 'recovery-all':
       await Product.updateMany(
         { _id: { $in: id } },
         {
@@ -340,14 +340,14 @@ module.exports.changeMulti = async (req, res) => {
         }
       );
 
-      req.flash("success", `Khôi phục ${id.length} sản phẩm thành công!`);
+      req.flash('success', `Khôi phục ${id.length} sản phẩm thành công!`);
 
       break;
     default:
       break;
   }
 
-  res.redirect(req.get("Referrer") || "/");
+  res.redirect(req.get('Referrer') || '/');
 };
 
 // [GET] /admin/products/detail/:id
@@ -364,7 +364,7 @@ module.exports.detail = async (req, res) => {
     100
   ).toFixed(2);
 
-  res.render("admin/pages/product/detail", {
+  res.render('admin/pages/product/detail', {
     titlePage: product.title,
     product: product,
   });

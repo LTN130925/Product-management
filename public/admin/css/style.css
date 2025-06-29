@@ -24,7 +24,7 @@
   position: fixed;
   top: 56px;
   left: 0;
-} 
+}
 
 .body .main {
   margin: 15px;
@@ -99,7 +99,7 @@
   border-radius: 5px;
 }
 
-.image-preview[src=""] {
+.image-preview[src=''] {
   display: none;
 }
 
@@ -136,4 +136,3 @@
 }
 
 /* End button remove image */
-

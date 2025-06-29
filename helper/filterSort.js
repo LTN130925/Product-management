@@ -1,6 +1,6 @@
 module.exports = (query) => {
   let view = {
-    position: "desc",
+    position: 'desc',
   };
 
   if (query.sortkey && query.valuekey) {

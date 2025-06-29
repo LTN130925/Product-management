@@ -1,7 +1,7 @@
-const cloudinary = require("cloudinary").v2;
-const streamifier = require("streamifier");
+const cloudinary = require('cloudinary').v2;
+const streamifier = require('streamifier');
 
-require("dotenv").config();
+require('dotenv').config();
 
 // Cloudinary
 
