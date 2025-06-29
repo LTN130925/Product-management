@@ -36,16 +36,31 @@ module.exports.createPost = async (req, res) => {
   res.redirect(`${systemConfig.prefixAdmin}/roles`);
 }
 
-// [GET] /admin/detai/:id
+// [GET] /admin/roles/detail/:id
 module.exports.detail = async (req, res) => {
+  const myName = [];
   const find = {
     _id: req.params.id,
     deleted: false
   }
   const record = await Role.findOne(find);
+  const data = await Role.find(find);
+
+  if (data.length > 0) {
+    data.forEach(record => {
+      const arrPermissions = record.permissions;
+      arrPermissions.forEach((permission) => {
+        const [moduleName, action] = permission.split('_');
+        if (!myName.includes(moduleName)) {
+          myName.push(moduleName);
+        }
+      });
+    });
+  }
   res.render("admin/pages/roles/detail", {
     titlePage: 'Chi tiết quyền',
     record: record,
+    arrayModuleName: myName,
   })
 }
 

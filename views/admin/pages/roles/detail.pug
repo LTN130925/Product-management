@@ -1,8 +1,21 @@
 extends ../../layouts/default
 
+include ../../mixins/helperRolesDetail
+
 block main
   if (record.title)
     h1(class="mb-4") #{record.title}
 
   if (record.description)
     div(class="mb-4") Mô tả: <b>#{record.title}</b>
+
+  if arrayModuleName.length > 0
+    - let nameModule = ''
+    each item in arrayModuleName
+      if item == 'products-category'
+        - nameModule = 'Danh mục sản phẩm'
+      else if item == 'products'
+        - nameModule = 'Sản phẩm'
+      else if item == 'roles'
+        - nameModule = 'Phân quyền'
+      +helperRolesDetail(record, item, nameModule)
