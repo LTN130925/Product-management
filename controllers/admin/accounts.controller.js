@@ -108,3 +108,33 @@ module.exports.edit = async (req, res) => {
     res.redirect(`${systemConfig.prefixAdmin}/accounts`);
   }
 };
+
+// [PATCH] /admin/accounts/edit/:id
+module.exports.editPatch = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const find = {
+      _id: { $ne: id },
+      email: req.body.email,
+      deleted: false,
+    };
+    const emailExits = await Account.findOne(find);
+    if (emailExits) {
+      req.flash('error', 'Email đã tồn tại!');
+      res.redirect(req.get('Referrer') || '/');
+      return;
+    }
+    if (req.body.password) {
+      req.body.password = md5(req.body.password);
+    } else {
+      delete req.body.password;
+    }
+
+    await Account.updateOne({ _id: id }, req.body);
+    req.flash('success', 'Chỉnh sửa tài khoản thành công!');
+    res.redirect(`${systemConfig.prefixAdmin}/accounts`);
+  } catch (error) {
+    req.flash('error', 'Chỉnh sửa tài khoản thất bại!');
+    res.redirect(req.get('Referrer') || '/');
+  }
+};

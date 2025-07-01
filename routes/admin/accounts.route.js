@@ -28,4 +28,12 @@ router.delete('/delete/:id', accountsController.delete);
 
 router.get('/edit/:id', accountsController.edit);
 
+router.patch(
+  '/edit/:id',
+  upload.single('avatar'),
+  middleware.uploadCloudinary,
+  validate.editPatch,
+  accountsController.editPatch
+);
+
 module.exports = router;
