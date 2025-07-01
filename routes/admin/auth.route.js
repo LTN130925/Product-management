@@ -4,7 +4,7 @@ const router = express.Router();
 const authController = require('../../controllers/admin/auth.controller');
 const validatesLogin = require('../../validates/admin/auth.validate');
 
-router.get('/login', authController.index);
+router.get('/login', validatesLogin.index, authController.index);
 
 router.post('/login', validatesLogin.loginPost, authController.loginPost);
 

@@ -2,8 +2,9 @@ const md5 = require('md5');
 const Accounts = require('../../models/account.model');
 
 const systemConfig = require('../../config/system');
+
 // [GET] /admin/auth/login
-module.exports.index = (req, res) => {
+module.exports.index = async (req, res) => {
   res.render('admin/pages/auth/login', {
     pageTitle: 'Trang đăng nhập',
   });
@@ -45,6 +46,7 @@ module.exports.loginPost = async (req, res) => {
   }
 };
 
+// [GET] /admin/auth/logout
 module.exports.logout = (req, res) => {
   res.clearCookie('token');
   res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
