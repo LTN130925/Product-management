@@ -49,3 +49,62 @@ module.exports.createPost = async (req, res) => {
   }
   res.redirect(`${systemConfig.prefixAdmin}/accounts`);
 };
+
+// [GET] /admin/accounts/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const find = {
+      _id: req.params.id,
+      deleted: false,
+    };
+    const data = await Role.find({ deleted: false });
+    const records = await Account.findOne(find).select('-password -token');
+    res.render('admin/pages/accounts/detail', {
+      titlePage: 'Trang chi tiết tại khoản',
+      records: records,
+      data: data,
+    });
+  } catch (error) {
+    req.flash('error', 'Lỗi Id');
+    res.redirect(req.get('Referrer') || '/');
+  }
+};
+
+// [PATCH] /admin/accounts/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+  console.log(req.params);
+  await Account.updateOne(
+    { _id: req.params.id },
+    { status: req.params.status }
+  );
+  req.flash('success', 'Cập nhật trang thái thành công!');
+  res.redirect(req.get('Referrer') || '/');
+};
+
+// [DELETE] /admin/accounts/delete/:id
+module.exports.delete = async (req, res) => {
+  console.log(req.params);
+  await Account.updateOne({ _id: req.params.id }, { deleted: true });
+  req.flash('success', 'Xóa tài khoản thành công!');
+  res.redirect(req.get('Referrer') || '/');
+};
+
+// [GET] /admin/accounts/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const find = {
+      _id: req.params.id,
+      deleted: false,
+    };
+    const data = await Role.find({ deleted: false });
+    const records = await Account.findOne(find);
+    res.render('admin/pages/accounts/edit', {
+      titlePage: 'Thêm mới tài khoản',
+      data: data,
+      records: records,
+    });
+  } catch (error) {
+    req.flash('error', 'Lỗi Id');
+    res.redirect(`${systemConfig.prefixAdmin}/accounts`);
+  }
+};

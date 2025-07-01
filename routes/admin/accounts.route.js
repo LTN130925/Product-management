@@ -20,4 +20,12 @@ router.post(
   accountsController.createPost
 );
 
+router.get('/detail/:id', accountsController.detail);
+
+router.patch('/change-status/:status/:id', accountsController.changeStatus);
+
+router.delete('/delete/:id', accountsController.delete);
+
+router.get('/edit/:id', accountsController.edit);
+
 module.exports = router;

@@ -19,3 +19,8 @@ block main
       else if item == 'roles'
         - nameModule = 'Phân quyền'
       +helperRolesDetail(record, item, nameModule)
+
+  a(
+    href=`${prefixAdmin}/roles/edit/${records.id}`
+    class="btn btn-warning btn-sm"
+  ) Điều chỉnh
