@@ -72,31 +72,34 @@ module.exports.create = async (req, res) => {
 
 // [POST] admin/products-category/create
 module.exports.createPost = async (req, res) => {
-  const body = req.body;
+  try {
+    const body = req.body;
 
-  const objectBody = {
-    title: body.title,
-    parent_id: body.parent_id,
-    description: body.description,
-    thumbnail: body.thumbnail,
-    status: body.status,
-    position: body.position,
-  };
+    const objectBody = {
+      title: body.title,
+      parent_id: body.parent_id,
+      description: body.description,
+      thumbnail: body.thumbnail,
+      status: body.status,
+      position: body.position,
+    };
 
-  if (objectBody.position === '') {
-    const countProduct = await ProductsCategory.countDocuments();
-    const count = countProduct + 1;
-    objectBody.position = count;
-  } else {
-    objectBody.position = +objectBody.position;
+    if (objectBody.position === '') {
+      const countProduct = await ProductsCategory.countDocuments();
+      const count = countProduct + 1;
+      objectBody.position = count;
+    } else {
+      objectBody.position = +objectBody.position;
+    }
+
+    const record = new ProductsCategory(objectBody);
+    await record.save();
+    req.flash('success', 'tạo danh mục thành công!');
+    res.redirect(`${systemConfig.prefixAdmin}/products-category`);
+  } catch (error) {
+    req.flash('success', 'tạo danh mục thành công!');
+    res.redirect(`${systemConfig.prefixAdmin}/products-category/create`);
   }
-
-  const record = new ProductsCategory(objectBody);
-  await record.save();
-
-  req.flash('success', 'tạo danh mục thành công!');
-
-  res.redirect(`${systemConfig.prefixAdmin}/products-category`);
 };
 
 // [DELETE] admin/products-category/deleted/:id
@@ -207,16 +210,31 @@ module.exports.permanentDelete = async (req, res) => {
 
 // [GET] admin/products-category/detail/:id
 module.exports.detail = async (req, res) => {
-  const id = req.params.id;
-  const record = await ProductsCategory.findOne({ _id: id });
-  const category = await ProductsCategory.find({ deleted: false });
-  const newCategory = helperCreateTree.tree(category);
+  try {
+    const id = req.params.id;
+    const record = await ProductsCategory.findOne({
+      _id: id,
+      deleted: false,
+    });
 
-  res.render('admin/pages/product-category/detail', {
-    pageTitle: 'Chi tiết danh mục',
-    record: record,
-    category: newCategory,
-  });
+    if (record.parent_id === '') {
+      record.category = '';
+    } else {
+      const category = await ProductsCategory.findOne({
+        _id: record.parent_id,
+        deleted: false,
+      });
+      record.category = category.title;
+    }
+
+    res.render('admin/pages/product-category/detail', {
+      pageTitle: 'Chi tiết danh mục',
+      record: record,
+    });
+  } catch (error) {
+    req.flash('error', 'Lỗi ID!');
+    res.redirect(`${systemConfig.prefixAdmin}/products-category`);
+  }
 };
 
 // [GET] admin/products-category/edit/:id
