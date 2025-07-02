@@ -1,5 +1,6 @@
 const Product = require('../../models/product.model');
 const ProductCategory = require('../../models/product-category.model');
+const Account = require('../../models/account.model');
 
 const filterStatusHelper = require('../../helper/filterStatus');
 const searchHelper = require('../../helper/search');
@@ -40,6 +41,15 @@ module.exports.index = async (req, res) => {
     .sort(views)
     .limit(objectPagination.limitItem)
     .skip(objectPagination.skip);
+
+  for (let product of products) {
+    const user = await Account.findOne({
+      _id: product.createdBy.account_id,
+    });
+    if (user) {
+      product.accountFullName = user.fullName;
+    }
+  }
 
   res.render('admin/pages/product/index', {
     pageTitle: 'Trang quản lý sản phẩm',
@@ -109,6 +119,10 @@ module.exports.createPost = async (req, res) => {
   } else {
     objectBody.position = +objectBody.position;
   }
+
+  objectBody.createdBy = {
+    account_id: res.locals.user.id,
+  };
 
   const products = new Product(objectBody);
   await products.save();
@@ -363,6 +377,18 @@ module.exports.detail = async (req, res) => {
     (product.price * (100 - product.discountPercentage)) /
     100
   ).toFixed(2);
+
+  if (product.product_category_id) {
+    const category = await ProductCategory.findOne({
+      _id: product.product_category_id,
+    });
+    product.category = category.title;
+  }
+
+  if (product.createdBy.account_id) {
+    const user = await Account.findOne({ _id: product.createdBy.account_id });
+    product.accountFullName = user.fullName;
+  }
 
   res.render('admin/pages/product/detail', {
     titlePage: product.title,

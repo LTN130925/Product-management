@@ -7,6 +7,7 @@ include ../../mixins/form-change-multi.pug
 include ../../mixins/alert.pug
 include ../../mixins/limitItem.pug
 include ../../mixins/sortItem.pug
+include ../../mixins/moment.pug
 
 block main
 
@@ -74,6 +75,7 @@ block main
               th Giá
               th Vị trí
               th Trạng thái
+              th Người tạo/thời gian tạo
               th Hành động
 
           tbody
@@ -131,6 +133,10 @@ block main
                       span(
                         class="badge badge-danger"
                       ) Dừng hoạt động
+                td 
+                  p #{item.accountFullName} 
+                  p 
+                    +formatDate(item.createdBy.createdAt)
                 td
                   a(
                     href=`${prefixAdmin}/products/detail/${item.id}`
@@ -157,6 +163,7 @@ block main
         id="form-change-status"
         data-path=`${prefixAdmin}/products/change-status`
       ) 
+
     if (role.permissions.includes('products_delete'))
       form(
         action="", 

@@ -1,8 +1,19 @@
 extends ../../layouts/default
 
+include ../../mixins/moment.pug
+
 block main
-  if(product.title)
+  if (product.title)
     h1(class="mb-4") #{product.title}
+
+  if (product.createdBy.account_id)
+    div(class="mb-4") Người tạo: <b>#{product.accountFullName}</b> *
+    div(class="mb-4") Thời gian tạo *
+      p 
+        +formatDateTime(product.createdBy.createdAt)
+
+  if (product.category)
+    div(class="mb-4") Danh mục: <b>#{product.category}</b>
 
   if (product.price)
     div(class="mb-4") Giá: <b>#{product.price}$</b>
