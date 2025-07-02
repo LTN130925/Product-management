@@ -72,7 +72,10 @@ module.exports.deleteItem = async (req, res) => {
     { _id: id },
     {
       deleted: true,
-      deletedAt: new Date(),
+      deletedBy: {
+        account_id: res.locals.user.id,
+        deletedAt: new Date(),
+      },
     }
   );
 
@@ -217,6 +220,15 @@ module.exports.trash = async (req, res) => {
     .limit(objectPagination.limitItem)
     .skip(objectPagination.skip);
 
+  for (let product of products) {
+    const user = await Account.findOne({
+      _id: product.deletedBy.account_id,
+    });
+    if (user) {
+      product.accountFullName = user.fullName;
+    }
+  }
+
   res.render('admin/pages/product/trashCanProducts', {
     pageTitle: 'Thùng rác sản phẩm',
     products: products,
@@ -317,7 +329,10 @@ module.exports.changeMulti = async (req, res) => {
         { _id: { $in: id } },
         {
           deleted: true,
-          deletedAt: new Date(),
+          deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date(),
+          },
         }
       );
 

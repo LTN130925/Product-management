@@ -7,6 +7,7 @@ include ../../mixins/form-change-multi.pug
 include ../../mixins/alert.pug
 include ../../mixins/limitItem.pug
 include ../../mixins/sortItem.pug
+include ../../mixins/moment.pug
 
 block main
   if (role.permissions.includes('products_view'))
@@ -64,7 +65,7 @@ block main
               th STT
               th Hình ảnh
               th Tiêu đề
-              th Thời gian bị xóa
+              th Người xóa/Thời gian bị xóa
               th Giá
               th Trạng thái
               th Hành động
@@ -88,7 +89,11 @@ block main
                     height="auto"
                   )
                 td #{item.title}
-                td #{item.deletedAt}
+                td
+                  p #{item.accountFullName} 
+                  p 
+                    +formatDateTime(item.deletedBy.deletedAt)
+
                 td #{item.price}$
                 td
                   if (role.permissions.includes('products_edit'))
