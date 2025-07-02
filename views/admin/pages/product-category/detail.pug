@@ -1,8 +1,17 @@
 extends ../../layouts/default
 
+include ../../mixins/moment.pug
+
 block main
   if(record.title)
     h1(class="mb-4") #{record.title}
+  
+  if (record.createdBy.account_id)
+    div(class="mb-4") Người tạo: <b>#{record.accountFullName}</b> *
+    div(class="mb-4") Thời gian tạo *
+      p 
+        +formatDateTime(record.createdBy.createdAt)
+
 
   if(record.category == '')
     div(class="mb-4") Đây là danh mục cha! 

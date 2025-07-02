@@ -1,4 +1,5 @@
 const ProductsCategory = require('../../models/product-category.model');
+const Account = require('../../models/account.model');
 
 const helperSearch = require('../../helper/search');
 const helperCreateTree = require('../../helper/create-tree');
@@ -21,6 +22,16 @@ module.exports.index = async (req, res) => {
   }
 
   const record = await ProductsCategory.find(find);
+  for (let item of record) {
+    const user = await Account.findOne({
+      _id: item.createdBy.account_id,
+    });
+
+    if (user) {
+      item.accountFullName = user.fullName;
+    }
+  }
+
   const newRecord = helperCreateTree.tree(record);
 
   res.render('admin/pages/product-category/index', {
@@ -47,6 +58,15 @@ module.exports.trash = async (req, res) => {
   }
 
   const record = await ProductsCategory.find(find);
+
+  for (let item of record) {
+    const user = await Account.findOne({
+      _id: item.deletedBy.account_id,
+    });
+    if (user) {
+      item.accountFullName = user.fullName;
+    }
+  }
 
   res.render('admin/pages/product-category/trash', {
     titlePage: 'Trang sản phẩm rác',
@@ -92,6 +112,10 @@ module.exports.createPost = async (req, res) => {
       objectBody.position = +objectBody.position;
     }
 
+    objectBody.createdBy = {
+      account_id: res.locals.user.id,
+    };
+
     const record = new ProductsCategory(objectBody);
     await record.save();
     req.flash('success', 'tạo danh mục thành công!');
@@ -109,7 +133,10 @@ module.exports.deleted = async (req, res) => {
     { _id: id },
     {
       deleted: true,
-      deletedAt: new Date(),
+      deletedBy: {
+        account_id: res.locals.user.id,
+        deletedAt: new Date(),
+      },
     }
   );
   req.flash('success', 'xóa danh mục thành công!');
@@ -170,7 +197,10 @@ module.exports.changeMulti = async (req, res) => {
         { _id: { $in: ids } },
         {
           deleted: true,
-          deletedAt: new Date(),
+          deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date(),
+          },
         }
       );
       req.flash('success', `Xóa ${ids.length} bản ghi thành công!`);
@@ -216,6 +246,11 @@ module.exports.detail = async (req, res) => {
       _id: id,
       deleted: false,
     });
+
+    if (record.createdBy.account_id) {
+      const user = await Account.findOne({ _id: record.createdBy.account_id });
+      record.accountFullName = user.fullName;
+    }
 
     if (record.parent_id === '') {
       record.category = '';

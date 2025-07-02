@@ -5,6 +5,7 @@ include ../../mixins/search.pug
 include ../../mixins/form-change-multi.pug
 include ../../mixins/alert.pug
 include ../../mixins/table.pug
+include ../../mixins/moment
 
 block main
   if (role.permissions.includes('products-category_view'))
@@ -55,6 +56,7 @@ block main
               th Tiêu đề
               th Thời gian bị xóa
               th Trạng thái
+              th Người xóa/ Thời gian xóa
               th Hành động
 
           tbody

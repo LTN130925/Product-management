@@ -7,7 +7,7 @@ const router = express.Router();
 
 const middleware = require('../../middlewares/admin/uploadCloudinary.middleware');
 const productCategoryController = require('../../controllers/admin/product-category.controller');
-const validate = require('../../validates/admin/accounts.validate');
+const validate = require('../../validates/admin/product-category.validate');
 
 router.get('/', productCategoryController.index);
 

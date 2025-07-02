@@ -53,6 +53,14 @@ mixin table(records, route, level = 1)
             span(
               class="badge badge-danger"
             ) Dừng hoạt động
+      td 
+        p #{item.accountFullName}
+        if (route == 'trash')
+          p 
+            +formatDateTime(item.deletedBy.deletedAt)
+        else 
+          p 
+            +formatDate(item.createdBy.createdAt)
       td
         if route == 'trash'
           if (role.permissions.includes('products-category_edit'))
