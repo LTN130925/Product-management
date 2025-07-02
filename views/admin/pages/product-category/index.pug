@@ -7,81 +7,81 @@ include ../../mixins/alert.pug
 include ../../mixins/table.pug
 
 block main
-  +alert-error(5000)
-  +alert-success(5000)
 
-  h1 Trang danh mục sản phẩm
+  if (role.permissions.includes('products-category_view'))
+    +alert-error(5000)
+    +alert-success(5000)
 
-  .card.mb-3
-    .card-header Bộ lọc và Tìm kiếm
-    .card-body
-      .row
+    h1 Trang danh mục sản phẩm
 
-        .col-6
-          +filterStatus(filterStatus)
-
-        .col-6
-          +search(keyword)
-
-  //.card.mb-3
-  //  .card-header Sắp xếp
-  //  .card-body
-  //    .row
-  //      .col-2
-  //        +sortItem("index")
-
-
-  .card.mb-3
-    .card-header Danh sách
+    .card.mb-3
+      .card-header Bộ lọc và Tìm kiếm
       .card-body
         .row
-          .col-md-6.d-flex
-            +form-change-multi(`${prefixAdmin}/products-category/change-multi?_method=PATCH`, "delete-all")
 
-          .col-6.d-flex
-            .ml-auto
-              a(
-                href=`${prefixAdmin}/products-category/create`
-                class="btn btn-outline-success"
-              ) + thêm mới
-              a(
-                href=`${prefixAdmin}/products-category/trash`
-                class="btn btn-outline-primary"
-              )
-                i(class="fas fa-trash")
+          .col-6
+            +filterStatus(filterStatus)
 
-      table(
-        class="table table-hover table-sm"
-        checkbox-multi
+          .col-6
+            +search(keyword)
+
+    .card.mb-3
+      .card-header Danh sách
+        .card-body
+          .row
+            .col-md-6.d-flex
+              if (role.permissions.includes('products-category_edit'))
+                +form-change-multi(`${prefixAdmin}/products-category/change-multi?_method=PATCH`, "delete-all")
+
+            .col-6.d-flex
+              .ml-auto
+                if (role.permissions.includes('products-category_create'))
+                  a(
+                    href=`${prefixAdmin}/products-category/create`
+                    class="btn btn-outline-success"
+                  ) + thêm mới
+                a(
+                  href=`${prefixAdmin}/products-category/trash`
+                  class="btn btn-outline-primary"
+                )
+                  i(class="fas fa-trash")
+
+        table(
+          class="table table-hover table-sm"
+          checkbox-multi
+        )
+          thead
+            tr
+              th
+                if (role.permissions.includes('products-category_edit'))
+                  input(type="checkbox" name="checkall")
+              th STT
+              th Hình ảnh
+              th Tiêu đề
+              th Vị trí
+              th Trạng thái
+              th Hành động
+
+          tbody
+            if(records)
+              +table(records, 'index')
+
+    if (role.permissions.includes('products-category_edit'))
+      form(
+        action="",
+        method="POST"
+        id="form-change-status"
+        data-path=`${prefixAdmin}/products-category/change-status`
       )
-        thead
-          tr
-            th
-              input(type="checkbox" name="checkall")
-            th STT
-            th Hình ảnh
-            th Tiêu đề
-            th Vị trí
-            th Trạng thái
-            th Hành động
 
-        tbody
-          if(records)
-            +table(records, 'index')
+    if (role.permissions.includes('products-category_delete'))
+      form(
+        action="",
+        method="POST"
+        id="form-delete-item"
+        data-path=`${prefixAdmin}/products-category/deleted`
+      )
 
-
-  form(
-    action="",
-    method="POST"
-    id="form-change-status"
-    data-path=`${prefixAdmin}/products-category/change-status`
-  )
-
-  form(
-    action="",
-    method="POST"
-    id="form-delete-item"
-    data-path=`${prefixAdmin}/products-category/deleted`
-  )
-
-  script(src="/admin/js/product.js")
+    script(src="/admin/js/product.js")
+  else 
+    p Bạn không được cấp quyền xem danh mục sản phẩm!

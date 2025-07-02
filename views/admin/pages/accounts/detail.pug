@@ -28,10 +28,11 @@ block main
       else
         span(class="badge badge-danger") Dừng hoạt động
 
-  a(
-    href=`${prefixAdmin}/accounts/edit/${records.id}`
-    class="btn btn-warning btn-sm"
-  ) Điều chỉnh
+  if (role.permissions.includes('accounts_edit')) 
+    a(
+      href=`${prefixAdmin}/accounts/edit/${records.id}`
+      class="btn btn-warning btn-sm"
+    ) Điều chỉnh
 
   script(src="/admin/js/product.js")
 

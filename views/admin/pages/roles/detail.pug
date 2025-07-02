@@ -20,7 +20,8 @@ block main
         - nameModule = 'Phân quyền'
       +helperRolesDetail(record, item, nameModule)
 
-  a(
-    href=`${prefixAdmin}/roles/permission`
-    class="btn btn-warning btn-sm"
-  ) Điều chỉnh
+  if (role.permissions.includes('roles_edit'))
+    a(
+      href=`${prefixAdmin}/roles/permission`
+      class="btn btn-warning btn-sm"
+    ) Điều chỉnh

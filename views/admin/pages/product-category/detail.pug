@@ -33,10 +33,11 @@ block main
   if(record.description)
     div(class="mb-4") Mô tả: !{record.description}
 
-  a(
-    href=`${prefixAdmin}/products-category/edit/${record.id}`
-    class="btn btn-warning btn-sm"
-  ) Điều chỉnh
+  if (role.permissions.includes('products-category_edit'))
+    a(
+      href=`${prefixAdmin}/products-category/edit/${record.id}`
+      class="btn btn-warning btn-sm"
+    ) Điều chỉnh
 
   script(src="/admin/js/product.js")
 

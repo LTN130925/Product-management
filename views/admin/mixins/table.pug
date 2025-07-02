@@ -3,11 +3,12 @@ mixin table(records, route, level = 1)
     - const prefix = Array(level + 1).join('-- ')
     tr
       td
-        input(
-          type="checkbox"
-          name="id"
-          value=item.id
-        )
+        if (role.permissions.includes('products-category_edit'))
+          input(
+            type="checkbox"
+            name="id"
+            value=item.id
+          )
       td #{item.index}
       td
         img(
@@ -26,42 +27,55 @@ mixin table(records, route, level = 1)
           name="position"
         )
       td
-        if(item.status == "active")
-          a(
-            href="javascript:;"
-            data-id=item.id
-            data-status=item.status
-            button-change-status
-            class="badge badge-success"
-          ) Hoạt động
-        else
-          a(
-            href="javascript:;"
-            data-id=item.id
-            data-status=item.status
-            button-change-status
-            class="badge badge-danger"
-          ) Dừng hoạt động
+        if (role.permissions.includes('products-category_edit'))
+          if(item.status == "active")
+            a(
+              href="javascript:;"
+              data-id=item.id
+              data-status=item.status
+              button-change-status
+              class="badge badge-success"
+            ) Hoạt động
+          else
+            a(
+              href="javascript:;"
+              data-id=item.id
+              data-status=item.status
+              button-change-status
+              class="badge badge-danger"
+            ) Dừng hoạt động
+        else 
+          if(item.status == "active")
+            span(
+              class="badge badge-success"
+            ) Hoạt động
+          else
+            span(
+              class="badge badge-danger"
+            ) Dừng hoạt động
       td
         if route == 'trash'
-          button(
-            data-id=item.id
-            button-recovery-item
-            class="btn badge-success btn-sm"
-          ) Khôi phục
+          if (role.permissions.includes('products-category_edit'))
+            button(
+              data-id=item.id
+              button-recovery-item
+              class="btn badge-success btn-sm"
+            ) Khôi phục
         else
           a(
             href=`${prefixAdmin}/products-category/detail/${item.id}`
             class="btn btn-secondary btn-sm"
           ) Chi tiết
-          a(
-            href=`${prefixAdmin}/products-category/edit/${item.id}`
-            class="btn btn-warning btn-sm"
-          ) Sửa
-        button(
-          data-id=item.id
-          button-delete-item
-          class="btn btn-danger btn-sm ml-1"
-        ) Xóa
+          if (role.permissions.includes('products-category_edit'))
+            a(
+              href=`${prefixAdmin}/products-category/edit/${item.id}`
+              class="btn btn-warning btn-sm"
+            ) Sửa
+        if (role.permissions.includes('products-category_delete'))
+          button(
+            data-id=item.id
+            button-delete-item
+            class="btn btn-danger btn-sm ml-1"
+          ) Xóa
     if item.children && item.children.length > 0
       +table(item.children, route, level + 1)
