@@ -11,10 +11,12 @@ mixin form-change-multi(path, typeChange)
           option(value="active") Hoạt động
           option(value="inactive") Dừng hoạt động
           if(typeChange == "permanentlyDelete-all")
-            option(value=typeChange) Xóa vĩnh viễn
+            if (role.permissions.includes('products-category_delete') || role.permissions.includes('products_delete'))
+              option(value=typeChange) Xóa vĩnh viễn
             option(value="recovery-all") Khôi phục
           else 
-            option(value="delete-all") Xóa sản phẩm
+            if (role.permissions.includes('products-category_delete') || role.permissions.includes('products_delete'))
+              option(value="delete-all") Xóa sản phẩm
           option(value="change-position") Thay đổi vị trí
           
       .form-group
