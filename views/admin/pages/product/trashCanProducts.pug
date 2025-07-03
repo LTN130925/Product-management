@@ -90,9 +90,10 @@ block main
                   )
                 td #{item.title}
                 td
-                  p #{item.accountFullName} 
-                  p 
-                    +formatDateTime(item.deletedBy.deletedAt)
+                  if (item.deletedBy.account_id)
+                    p #{item.accountFullName} 
+                    p 
+                      +formatDateTime(item.deletedBy.deletedAt)
 
                 td #{item.price}$
                 td
