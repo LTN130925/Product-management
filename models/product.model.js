@@ -38,8 +38,8 @@ const productsSchema = new mongoose.Schema({
   },
   updatedBy: [
     {
-      titleUpdated: String,
       account_id: String,
+      titleUpdated: String,
       updatedAt: Date,
     },
   ],

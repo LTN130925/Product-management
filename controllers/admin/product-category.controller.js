@@ -23,12 +23,19 @@ module.exports.index = async (req, res) => {
 
   const record = await ProductsCategory.find(find);
   for (let item of record) {
-    const user = await Account.findOne({
-      _id: item.createdBy.account_id,
-    });
+    if (item.createdBy.account_id) {
+      const user = await Account.findOne({
+        _id: item.createdBy.account_id,
+      });
+      item.createdBy.accountFullName = user.fullName;
+    }
 
-    if (user) {
-      item.accountFullName = user.fullName;
+    if (item.updatedBy.length) {
+      const updatedBy = item.updatedBy[item.updatedBy.length - 1];
+      const user = await Account.findOne({
+        _id: updatedBy.account_id,
+      });
+      item.updatedBy[item.updatedBy.length - 1].accountFullName = user.fullName;
     }
   }
 
@@ -151,7 +158,19 @@ module.exports.changeStatus = async (req, res) => {
     id: req.params.id,
   };
   const { status, id } = objectParams;
-  await ProductsCategory.updateOne({ _id: id }, { status: status });
+
+  const updatedBy = {
+    titleUpdated: 'chính sửa trạng thái',
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+  await ProductsCategory.updateOne(
+    { _id: id },
+    {
+      status: status,
+      $push: { updatedBy: updatedBy },
+    }
+  );
   req.flash('success', 'Cập nhật trạng thái thành công!');
   res.redirect(req.get('Referrer') || '/');
 };
@@ -163,12 +182,22 @@ module.exports.changeMulti = async (req, res) => {
     ids: req.body.ids.split(', '),
     type: req.body.type,
   };
+
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+
   const { ids, type } = objectBody;
   switch (type) {
     case 'active':
+      updatedBy.titleUpdated = 'chỉnh sửa trang thái';
       await ProductsCategory.updateMany(
         { _id: { $in: ids } },
-        { status: type }
+        {
+          status: type,
+          $push: { updatedBy: updatedBy },
+        }
       );
       req.flash(
         'success',
@@ -176,9 +205,13 @@ module.exports.changeMulti = async (req, res) => {
       );
       break;
     case 'inactive':
+      updatedBy.titleUpdated = 'chỉnh sửa trang thái';
       await ProductsCategory.updateMany(
         { _id: { $in: ids } },
-        { status: type }
+        {
+          status: type,
+          $push: { updatedBy: updatedBy },
+        }
       );
       req.flash(
         'success',
@@ -186,9 +219,13 @@ module.exports.changeMulti = async (req, res) => {
       );
       break;
     case 'recovery-all':
+      updatedBy.titleUpdated = 'khôi phục danh mục sản phẩm';
       await ProductsCategory.updateMany(
         { _id: { $in: ids } },
-        { deleted: false }
+        {
+          deleted: false,
+          $push: { updatedBy: updatedBy },
+        }
       );
       req.flash('success', `Khôi phục ${ids.length} bản ghi thành công!`);
       break;
@@ -210,9 +247,16 @@ module.exports.changeMulti = async (req, res) => {
       req.flash('success', `Xóa vĩnh viễn ${ids.length} bản ghi thành công!`);
       break;
     case 'change-position':
+      updatedBy.titleUpdated = 'thay đổi vị trí danh mục sản phẩm';
       for (const item of ids) {
         let [id, position] = item.split('-');
-        await ProductsCategory.updateOne({ _id: id }, { position: +position });
+        await ProductsCategory.updateOne(
+          { _id: id },
+          {
+            position: +position,
+            $push: { updatedBy: updatedBy },
+          }
+        );
       }
       req.flash('success', `Cập nhật vị trí ${ids.length} bản ghi thành công!`);
       break;
@@ -225,7 +269,18 @@ module.exports.changeMulti = async (req, res) => {
 // [PATCH] admin/products-category/trash/recovery/:id
 module.exports.recovery = async (req, res) => {
   const id = req.params.id;
-  await ProductsCategory.updateOne({ _id: id }, { deleted: false });
+  const updatedBy = {
+    titleUpdated: 'khôi phục danh mục sản phẩm',
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+  await ProductsCategory.updateOne(
+    { _id: id },
+    {
+      deleted: false,
+      $push: { updatedBy: updatedBy },
+    }
+  );
   req.flash('success', 'Khôi phục danh mục thành công!');
   res.redirect(req.get('Referrer') || '/');
 };
@@ -260,6 +315,17 @@ module.exports.detail = async (req, res) => {
         deleted: false,
       });
       record.category = category.title;
+    }
+
+    if (record.updatedBy.length) {
+      const n = Math.floor(record.updatedBy.length / 2);
+      for (let i = record.updatedBy.length - 1; i >= n; i--) {
+        const user = await Account.findOne({
+          _id: record.updatedBy[i].account_id,
+        });
+
+        record.updatedBy[i].accountFullName = user.fullName;
+      }
     }
 
     res.render('admin/pages/product-category/detail', {
@@ -310,8 +376,20 @@ module.exports.editPatch = async (req, res) => {
 
   objectBody.position = body.position === '' ? 0 : +objectBody.position;
 
+  const updatedBy = {
+    titleUpdated: 'cập nhật sản phẩm',
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+
   try {
-    await ProductsCategory.updateOne({ _id: req.params.id }, objectBody);
+    await ProductsCategory.updateOne(
+      { _id: req.params.id },
+      {
+        ...objectBody,
+        $push: { updatedBy: updatedBy },
+      }
+    );
     req.flash('success', 'Sửa danh mục thành công!');
   } catch (error) {
     req.flash('error', 'Danh mục không tồn tại!');

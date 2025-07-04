@@ -431,43 +431,48 @@ module.exports.changeMulti = async (req, res) => {
 
 // [GET] /admin/products/detail/:id
 module.exports.detail = async (req, res) => {
-  let find = {
-    _id: req.params.id,
-    deleted: false,
-  };
+  try {
+    let find = {
+      _id: req.params.id,
+      deleted: false,
+    };
 
-  const product = await Product.findOne(find);
+    const product = await Product.findOne(find);
 
-  product.newPrice = (
-    (product.price * (100 - product.discountPercentage)) /
-    100
-  ).toFixed(2);
+    product.newPrice = (
+      (product.price * (100 - product.discountPercentage)) /
+      100
+    ).toFixed(2);
 
-  if (product.product_category_id) {
-    const category = await ProductCategory.findOne({
-      _id: product.product_category_id,
-    });
-    product.category = category.title;
-  }
-
-  if (product.createdBy.account_id) {
-    const user = await Account.findOne({ _id: product.createdBy.account_id });
-    product.accountFullName = user.fullName;
-  }
-
-  if (product.updatedBy.length) {
-    const n = Math.floor(product.updatedBy.length / 2);
-    for (let i = product.updatedBy.length - 1; i >= n; i--) {
-      const user = await Account.findOne({
-        _id: product.updatedBy[i].account_id,
+    if (product.product_category_id) {
+      const category = await ProductCategory.findOne({
+        _id: product.product_category_id,
       });
-
-      product.updatedBy[i].accountFullName = user.fullName;
+      product.category = category.title;
     }
-  }
 
-  res.render('admin/pages/product/detail', {
-    titlePage: product.title,
-    product: product,
-  });
+    if (product.createdBy.account_id) {
+      const user = await Account.findOne({ _id: product.createdBy.account_id });
+      product.accountFullName = user.fullName;
+    }
+
+    if (product.updatedBy.length) {
+      const n = Math.floor(product.updatedBy.length / 2);
+      for (let i = product.updatedBy.length - 1; i >= n; i--) {
+        const user = await Account.findOne({
+          _id: product.updatedBy[i].account_id,
+        });
+
+        product.updatedBy[i].accountFullName = user.fullName;
+      }
+    }
+
+    res.render('admin/pages/product/detail', {
+      titlePage: product.title,
+      product: product,
+    });
+  } catch (error) {
+    req.flash('error', 'Lỗi ID!');
+    res.redirect(`${systemConfig.prefixAdmin}/products`);
+  }
 };

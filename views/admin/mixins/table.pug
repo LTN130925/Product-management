@@ -56,14 +56,21 @@ mixin table(records, route, level = 1)
       td 
         if (route == 'trash')
           if (item.deletedBy.account_id)
-            p #{item.accountFullName}
+            p #{item.deletedBy.accountFullName}
             p 
               +formatDateTime(item.deletedBy.deletedAt)
         else 
           if (item.createdBy.account_id)
-            p #{item.accountFullName}
+            p #{item.createdBy.accountFullName}
             p 
               +formatDate(item.createdBy.createdAt)
+      td 
+        if (route != 'trash')
+          if (item.updatedBy && item.updatedBy.length)
+            - const updatedBy = item.updatedBy[item.updatedBy.length - 1]
+            p #{updatedBy.accountFullName} - #{updatedBy.titleUpdated}
+            p 
+              +formatDateTime(updatedBy.updatedAt)
       td
         if route == 'trash'
           if (role.permissions.includes('products-category_edit'))
