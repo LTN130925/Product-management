@@ -31,7 +31,7 @@ module.exports.editPatch = async (req, res) => {
       res.redirect(`${systemConfig.prefixAdmin}/my-account/edit`);
       return;
     } else {
-      await Account.updateOne({ id: id }, req.body);
+      await Account.updateOne({ _id: id }, req.body);
       req.flash('success', 'chỉnh sửa thông tin thành công!');
     }
   } catch (error) {

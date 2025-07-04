@@ -1,0 +1,42 @@
+extends ../../layouts/default.pug
+
+include ../../mixins/alert.pug
+
+block main 
+  +alert-success(5000)
+  +alert-error(5000)
+
+  h1.mb-4.text-primary Điều chỉnh thông tin cá nhân
+
+  .card.mb-3.shadow
+    .card-header.bg-primary.text-white Điều chỉnh thông tin cá nhân
+    .card-body
+      form(
+        action=`${prefixAdmin}/replace-password/edit?_method=PATCH`
+        method="POST"
+      )
+        .form-group
+          label(for="email") Email
+          div.form-control.bg-light #{user.email}
+
+        .form-group
+          label(for="password") Mật khẩu mới *
+          input#password.form-control(type="password", name="password", required)
+          small.text-muted.d-block.mt-1
+            | Mật khẩu phải có:
+            ul.mb-0
+              li Ít nhất 1 chữ in hoa (A–Z)
+              li Ít nhất 1 chữ thường (a–z)
+              li Ít nhất 1 chữ số (0–9)
+              li Ít nhất 1 ký tự đặc biệt (@, #, !, v.v.)
+              li Không chứa khoảng trắng
+              li Độ dài từ 8 đến 16 ký tự
+
+        .form-group
+          label(for="password_check") Xác thực lại mật khẩu mới *
+          input#password_check.form-control(type="password", name="password_check", required)
+
+        .form-group.mt-4
+          button.btn.btn-success.btn-block(type="submit")
+            i.fas.fa-save.mr-1
+            | Cập nhật
