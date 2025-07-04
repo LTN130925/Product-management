@@ -75,7 +75,8 @@ block main
               th Giá
               th Vị trí
               th Trạng thái
-              th Người tạo/thời gian tạo
+              th Người tạo/ thời gian tạo
+              th Người sửa/ thời gian sửa
               th Hành động
 
           tbody
@@ -135,9 +136,16 @@ block main
                       ) Dừng hoạt động
                 td 
                   if (item.createdBy.account_id)
-                    p #{item.accountFullName} 
+                    p #{item.createdBy.accountFullName} 
                     p 
                       +formatDate(item.createdBy.createdAt)
+                td 
+                  if (item.updatedBy && item.updatedBy.length > 0)
+                    - const userUpdateBy = item.updatedBy[item.updatedBy.length - 1]
+                    p #{userUpdateBy.accountFullName} - #{userUpdateBy.titleUpdated}
+                    p 
+                      +formatDateTime(userUpdateBy.updatedAt)
+
                 td
                   a(
                     href=`${prefixAdmin}/products/detail/${item.id}`

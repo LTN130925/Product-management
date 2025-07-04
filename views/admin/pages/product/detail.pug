@@ -12,6 +12,16 @@ block main
       p 
         +formatDateTime(product.createdBy.createdAt)
 
+  if (product.updatedBy.length && product.updatedBy)
+    div(class="mb-4") <b>Lịch sử chỉnh sửa sản phẩm gần đây:</b> 
+      - const n = Math.floor(product.updatedBy.length / 2);
+      - for (let i = product.updatedBy.length - 1; i >= n; i--)
+        div(class="mb-4") Người chỉnh sửa: <b>#{product.updatedBy[i].accountFullName}</b> * - <b>#{product.updatedBy[i].titleUpdated}</b>
+        div(class="mb-4") Thời gian chỉnh sửa *
+          p 
+            +formatDateTime(product.updatedBy[i].updatedAt)
+        div ----------------
+
   if (product.category)
     div(class="mb-4") Danh mục: <b>#{product.category}</b>
 
