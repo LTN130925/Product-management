@@ -70,13 +70,19 @@ block main
               accept="image/*"
               upload-image-input
             )
-
-            img(
-              src=records.avatar 
-              class="image-preview"
-              upload-image-preview
+            div(
+              class="image-preview-wrapper"
             )
-
+              img(
+                src=records.avatar 
+                class="image-preview"
+                upload-image-preview
+              )
+              button(
+                type="button",
+                button-remove-image
+              ) X
+              
           div(class="form-group")
             label(for="role_id") Phân quyền
             select(name="role_id" id="role_id" class="form-control")

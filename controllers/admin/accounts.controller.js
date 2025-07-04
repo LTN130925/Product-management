@@ -11,6 +11,10 @@ module.exports.index = async (req, res) => {
   };
 
   const records = await Account.find(find).select('-password -token');
+  for (let item of records) {
+    const titleRole = await Role.findOne({ _id: item.role_id });
+    item.titleRole = titleRole.title;
+  }
   res.render('admin/pages/accounts/index', {
     titlePage: 'Trang danh sách tài khoản',
     records: records,

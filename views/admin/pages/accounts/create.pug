@@ -68,6 +68,18 @@ block main
               accept="image/*"
               upload-image-input
             )
+            div(
+              class="image-preview-wrapper"
+            )
+              img(
+                src=records.avatar 
+                class="image-preview"
+                upload-image-preview
+              )
+              button(
+                type="button",
+                button-remove-image
+              ) X
 
             img(
               src=""

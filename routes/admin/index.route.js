@@ -4,6 +4,9 @@ const productCategoryRoutes = require('./products-category.route');
 const rolesRoutes = require('./role.route');
 const accountsRoutes = require('./accounts.route');
 const authRoutes = require('./auth.route');
+const myAccount = require('./myAccount.route');
+const replacePassword = require('./replacePassword.route');
+
 const authMiddleware = require('../../middlewares/admin/auth.middleware');
 
 const systemConfig = require('../../config/system');
@@ -28,6 +31,14 @@ module.exports = (app) => {
   app.use(PATH_ADMIN + '/roles', authMiddleware.requireAuth, rolesRoutes);
 
   app.use(PATH_ADMIN + '/accounts', authMiddleware.requireAuth, accountsRoutes);
+
+  app.use(PATH_ADMIN + '/my-account', authMiddleware.requireAuth, myAccount);
+
+  app.use(
+    PATH_ADMIN + '/replace-password',
+    authMiddleware.requireAuth,
+    replacePassword
+  );
 
   app.use(PATH_ADMIN + '/auth', authRoutes);
 };
