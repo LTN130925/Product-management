@@ -115,6 +115,7 @@ module.exports.createPost = async (req, res) => {
   const objectBody = {
     title: body.title,
     product_category_id: body.product_category_id,
+    featured: body.featured,
     description: body.description,
     price: +body.price,
     discountPercentage: +body.discountPercentage,
@@ -174,6 +175,7 @@ module.exports.editPatch = async (req, res) => {
   const objectBody = {
     title: body.title,
     product_category_id: body.product_category_id,
+    featured: body.featured,
     description: body.description,
     price: +body.price,
     discountPercentage: +body.discountPercentage,

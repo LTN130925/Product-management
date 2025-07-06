@@ -6,6 +6,8 @@ block main
   if (product.title)
     h1(class="mb-4") #{product.title}
 
+  div(class="mb-4") Nổi bật: <b> #{product.featured == "1" ? "có" : "không"} </b>
+
   if (product.createdBy.account_id)
     div(class="mb-4") Người tạo: <b>#{product.accountFullName}</b> *
     div(class="mb-4") Thời gian tạo *
