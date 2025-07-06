@@ -10,10 +10,22 @@ module.exports.index = async (req, res) => {
     status: 'active',
   }).limit(6);
 
+  // sp sản phẩm nổi bật trang chủ
   const newProductsFeatured = helperNewPrice.newPrice(productsFeatured);
+
+  // ds sản phẩm mới nhất trang chủ
+  const newProducts = await Product.find({
+    deleted: false,
+    status: 'active',
+  })
+    .sort({ position: 'desc' })
+    .limit(6);
+
+  const newProductsNew = helperNewPrice.newPrice(newProducts);
 
   res.render('client/pages/home/index', {
     pageTitle: 'Trang chủ',
     productsFeatured: newProductsFeatured,
+    newProducts: newProductsNew,
   });
 };
