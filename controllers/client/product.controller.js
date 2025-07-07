@@ -31,10 +31,17 @@ module.exports.detail = async (req, res) => {
 
   const product = await Product.findOne(find);
 
-  product.newPrice = (
-    (product.price * (100 - product.discountPercentage)) /
-    100
-  ).toFixed(2);
+  if (product.product_category_id) {
+    const productCategory = await ProductCategory.findOne({
+      _id: product.product_category_id,
+      status: 'active',
+      deleted: false,
+    });
+
+    product.category = productCategory;
+  }
+
+  helperNewPrice.priceNewProduct(product);
 
   res.render('client/pages/products/detail', {
     pageTitle: product.title,
