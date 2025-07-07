@@ -8,6 +8,7 @@ const paginationHelper = require('../../helper/pagination');
 const filterSort = require('../../helper/filterSort');
 const createTreeHelper = require('../../helper/create-tree');
 const showBlogHelper = require('../../helper/showBlogCreateAndEdit');
+const showBlogDetailHelper = require('../../helper/showBlogDateDetail');
 
 const systemConfig = require('../../config/system');
 
@@ -439,21 +440,11 @@ module.exports.detail = async (req, res) => {
       product.category = category.title;
     }
 
-    if (product.createdBy.account_id) {
-      const user = await Account.findOne({ _id: product.createdBy.account_id });
-      product.accountFullName = user.fullName;
-    }
+    // show create detail
+    await showBlogDetailHelper.showDetailCreate(product);
 
-    if (product.updatedBy.length) {
-      const n = Math.floor(product.updatedBy.length / 2);
-      for (let i = product.updatedBy.length - 1; i >= n; i--) {
-        const user = await Account.findOne({
-          _id: product.updatedBy[i].account_id,
-        });
-
-        product.updatedBy[i].accountFullName = user.fullName;
-      }
-    }
+    // show edit detail
+    await showBlogDetailHelper.showDetailEdit(product);
 
     res.render('admin/pages/product/detail', {
       titlePage: product.title,

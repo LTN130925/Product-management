@@ -6,6 +6,7 @@ const helperCreateTree = require('../../helper/create-tree');
 const systemConfig = require('../../config/system');
 const filterStatusHelper = require('../../helper/filterStatus');
 const showBlogHelper = require('../../helper/showBlogCreateAndEdit');
+const showBlogDetailHelper = require('../../helper/showBlogDateDetail');
 
 // [GET] admin/products-category
 module.exports.index = async (req, res) => {
@@ -290,11 +291,6 @@ module.exports.detail = async (req, res) => {
       deleted: false,
     });
 
-    if (record.createdBy.account_id) {
-      const user = await Account.findOne({ _id: record.createdBy.account_id });
-      record.accountFullName = user.fullName;
-    }
-
     if (record.parent_id === '') {
       record.category = '';
     } else {
@@ -305,16 +301,11 @@ module.exports.detail = async (req, res) => {
       record.category = category.title;
     }
 
-    if (record.updatedBy.length) {
-      const n = Math.floor(record.updatedBy.length / 2);
-      for (let i = record.updatedBy.length - 1; i >= n; i--) {
-        const user = await Account.findOne({
-          _id: record.updatedBy[i].account_id,
-        });
+    // show create detail
+    await showBlogDetailHelper.showDetailCreate(record);
 
-        record.updatedBy[i].accountFullName = user.fullName;
-      }
-    }
+    // show edit detail
+    await showBlogDetailHelper.showDetailEdit(record);
 
     res.render('admin/pages/product-category/detail', {
       pageTitle: 'Chi tiết danh mục',
