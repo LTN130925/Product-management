@@ -9,4 +9,6 @@ route.get('/', controllerProduct.index);
 
 route.get('/detail/:slug', validateSlug.slugCheck, controllerProduct.detail);
 
+route.get('/:slug_category', controllerProduct.slugCategory);
+
 module.exports = route;
