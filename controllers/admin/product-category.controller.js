@@ -5,6 +5,7 @@ const helperSearch = require('../../helper/search');
 const helperCreateTree = require('../../helper/create-tree');
 const systemConfig = require('../../config/system');
 const filterStatusHelper = require('../../helper/filterStatus');
+const showBlogHelper = require('../../helper/showBlogCreateAndEdit');
 
 // [GET] admin/products-category
 module.exports.index = async (req, res) => {
@@ -22,22 +23,9 @@ module.exports.index = async (req, res) => {
   }
 
   const record = await ProductsCategory.find(find);
-  for (let item of record) {
-    if (item.createdBy.account_id) {
-      const user = await Account.findOne({
-        _id: item.createdBy.account_id,
-      });
-      item.createdBy.accountFullName = user.fullName;
-    }
 
-    if (item.updatedBy.length) {
-      const updatedBy = item.updatedBy[item.updatedBy.length - 1];
-      const user = await Account.findOne({
-        _id: updatedBy.account_id,
-      });
-      item.updatedBy[item.updatedBy.length - 1].accountFullName = user.fullName;
-    }
-  }
+  // show blog data
+  await showBlogHelper.showDataIndex(record);
 
   const newRecord = helperCreateTree.tree(record);
 

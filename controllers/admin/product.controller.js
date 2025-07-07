@@ -7,6 +7,7 @@ const searchHelper = require('../../helper/search');
 const paginationHelper = require('../../helper/pagination');
 const filterSort = require('../../helper/filterSort');
 const createTreeHelper = require('../../helper/create-tree');
+const showBlogHelper = require('../../helper/showBlogCreateAndEdit');
 
 const systemConfig = require('../../config/system');
 
@@ -42,23 +43,8 @@ module.exports.index = async (req, res) => {
     .limit(objectPagination.limitItem)
     .skip(objectPagination.skip);
 
-  for (let product of products) {
-    if (product.createdBy.account_id) {
-      const user = await Account.findOne({
-        _id: product.createdBy.account_id,
-      });
-      product.createdBy.accountFullName = user.fullName;
-    }
-
-    if (product.updatedBy.length) {
-      const updatedBy = product.updatedBy[product.updatedBy.length - 1];
-      const user = await Account.findOne({
-        _id: updatedBy.account_id,
-      });
-      product.updatedBy[product.updatedBy.length - 1].accountFullName =
-        user.fullName;
-    }
-  }
+  // show blog data
+  await showBlogHelper.showDataIndex(products);
 
   res.render('admin/pages/product/index', {
     pageTitle: 'Trang quản lý sản phẩm',
