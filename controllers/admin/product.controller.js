@@ -58,6 +58,11 @@ module.exports.index = async (req, res) => {
 
 // [DELETE] /admin/products/deleteItem/:id
 module.exports.deleteItem = async (req, res) => {
+  if (res.locals.role.permissions.includes('products_delete')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const objectParams = {
     id: req.params.id,
   };
@@ -76,7 +81,6 @@ module.exports.deleteItem = async (req, res) => {
   );
 
   req.flash('success', 'Xóa sản phẩm thành công!');
-
   res.redirect(req.get('Referrer') || '/');
 };
 
@@ -97,6 +101,11 @@ module.exports.create = async (req, res) => {
 
 // [POST] /admin/products/create
 module.exports.createPost = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products_create')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const body = req.body;
 
   const objectBody = {
@@ -128,7 +137,6 @@ module.exports.createPost = async (req, res) => {
   await products.save();
 
   req.flash('success', 'Tạo sản phẩm thành công!');
-
   res.redirect(`${systemConfig.prefixAdmin}/products`);
 };
 
@@ -157,6 +165,11 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] /admin/products/edit/:id
 module.exports.editPatch = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const body = req.body;
 
   const objectBody = {
@@ -245,6 +258,11 @@ module.exports.trash = async (req, res) => {
 
 // [PATCH] /admin/products/trashCan/recovery/:id
 module.exports.recovery = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const objectParams = {
     id: req.params.id,
   };
@@ -270,6 +288,11 @@ module.exports.recovery = async (req, res) => {
 
 // [DELETE] /admin/products/trashCan/permanentlyDelete/:id
 module.exports.permanentlyDelete = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products_delete')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const objectParams = {
     id: req.params.id,
   };
@@ -286,6 +309,11 @@ module.exports.permanentlyDelete = async (req, res) => {
 // [PATCH] /admin/products/trashCan/change-status/:status/:id
 // [PATCH] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const objectParams = {
     status: req.params.status,
     id: req.params.id,
@@ -314,6 +342,11 @@ module.exports.changeStatus = async (req, res) => {
 // [PATCH] /admin/products/trashCan/change-multi
 // [PATCH] /admin/products/change-multi
 module.exports.changeMulti = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const objectBody = {
     id: req.body.ids.split(', '),
     status: req.body.type,

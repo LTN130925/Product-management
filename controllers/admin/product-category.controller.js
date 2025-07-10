@@ -88,6 +88,11 @@ module.exports.create = async (req, res) => {
 
 // [POST] admin/products-category/create
 module.exports.createPost = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products-category_create')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   try {
     const body = req.body;
 
@@ -124,6 +129,11 @@ module.exports.createPost = async (req, res) => {
 
 // [DELETE] admin/products-category/deleted/:id
 module.exports.deleted = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products-category_delete')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const id = req.params.id;
   await ProductsCategory.updateOne(
     { _id: id },
@@ -142,6 +152,11 @@ module.exports.deleted = async (req, res) => {
 // [GET] admin/products-category/trash/change-status/:status/:id
 // [GET] admin/products-category/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products-category_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const objectParams = {
     status: req.params.status,
     id: req.params.id,
@@ -167,6 +182,11 @@ module.exports.changeStatus = async (req, res) => {
 // [PATCH] admin/products-category/change-multi
 // [PATCH] admin/products-category/trash/change-multi
 module.exports.changeMulti = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products-category_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const objectBody = {
     ids: req.body.ids.split(', '),
     type: req.body.type,
@@ -257,6 +277,11 @@ module.exports.changeMulti = async (req, res) => {
 
 // [PATCH] admin/products-category/trash/recovery/:id
 module.exports.recovery = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products-category_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const id = req.params.id;
   const updatedBy = {
     titleUpdated: 'khôi phục danh mục sản phẩm',
@@ -276,6 +301,11 @@ module.exports.recovery = async (req, res) => {
 
 // [DELETE] admin/products-category/trash/permanentlyDelete/:id
 module.exports.permanentDelete = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products-category_delete')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const id = req.params.id;
   await ProductsCategory.deleteOne({ _id: id });
   req.flash('success', 'xóa vĩnh viễn danh mục thành công!');
@@ -342,6 +372,11 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] admin/products-category/edit/:id
 module.exports.editPatch = async (req, res) => {
+  if (!res.locals.role.permissions.includes('products-category_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   const body = req.body;
 
   const objectBody = {

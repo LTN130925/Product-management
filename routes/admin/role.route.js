@@ -19,6 +19,8 @@ router.delete('/deleted/:id', roleController.delete);
 
 router.get('/permission', roleController.permission);
 
-router.patch('/permission', roleController.permissionPatch)
+router.patch('/permission', roleController.permissionPatch);
+
+router.patch('/change-multi', roleController.changeMulti);
 
 module.exports = router;

@@ -6,18 +6,23 @@ mixin form-change-multi(path, typeChange)
   )
     .d-flex.align-items-start
       .form-group
-        select(name="type" class="form-control")
-          option(disabled selected) -- Chọn hành động --
-          option(value="active") Hoạt động
-          option(value="inactive") Dừng hoạt động
-          if(typeChange == "permanentlyDelete-all")
-            if (role.permissions.includes('products-category_delete') || role.permissions.includes('products_delete'))
-              option(value=typeChange) Xóa vĩnh viễn
-            option(value="recovery-all") Khôi phục
-          else 
-            if (role.permissions.includes('products-category_delete') || role.permissions.includes('products_delete'))
-              option(value="delete-all") Xóa sản phẩm
-          option(value="change-position") Thay đổi vị trí
+        select(name="type" class="form-control") 
+          option(disabled selected) -- Chọn hành động --    
+            if (typeChange != "roles")
+              option(value="active") Hoạt động
+              option(value="inactive") Dừng hoạt động
+              if (typeChange == "permanentlyDelete-all")
+                if (role.permissions.includes('products-category_delete') || role.permissions.includes('products_delete'))
+                  option(value=typeChange) Xóa vĩnh viễn
+                option(value="recovery-all") Khôi phục
+              else 
+                if (role.permissions.includes('products-category_delete') || role.permissions.includes('products_delete') || role.permissions.includes('accounts_delete'))
+                  option(value="delete-all") Xóa sản phẩm
+              if (typeChange != "accounts")
+                option(value="change-position") Thay đổi vị trí
+            else 
+              option(value="delete-all") Xóa quyền
+              
           
       .form-group
         input(

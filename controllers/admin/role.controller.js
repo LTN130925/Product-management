@@ -1,5 +1,6 @@
 const Role = require('../../models/role.model');
 
+const showBlogHelper = require('../../helper/showBlogCreateAndEdit');
 const systemConfig = require('../../config/system');
 
 // [GET] /admin/roles
@@ -9,6 +10,7 @@ module.exports.index = async (req, res) => {
   };
 
   const records = await Role.find(find);
+  await showBlogHelper.showDataIndex(records);
 
   res.render('admin/pages/roles/index', {
     titlePage: 'Phân quyền',
@@ -25,9 +27,16 @@ module.exports.create = async (req, res) => {
 
 // [POST] /admin/roles/create
 module.exports.createPost = async (req, res) => {
+  if (!res.locals.role.permissions.includes('roles_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
   const objectBody = {
     title: req.body.title,
     description: req.body.description,
+  };
+  objectBody.createdBy = {
+    account_id: res.locals.user.id,
   };
   const record = new Role(objectBody);
   await record.save();
@@ -82,19 +91,47 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] admin/roles/edit/:id
 module.exports.editPatch = async (req, res) => {
+  if (!res.locals.role.permissions.includes('roles_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
   try {
-    await Role.updateOne({ _id: req.params.id }, req.body);
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date(),
+    };
+    await Role.updateOne(
+      { _id: req.params.id },
+      {
+        ...req.body,
+        $push: { updatedBy: updatedBy },
+      }
+    );
     req.flash('success', 'Sửa thành công!');
   } catch (error) {
     req.flash('error', 'Lỗi!');
   }
-  res.redirect(req.get('Referrer') || '/');
+  res.redirect(`${systemConfig.prefixAdmin}/roles`);
 };
 
-// [DELETE] /admin/roles/permanent-delete/:id
+// [DELETE] /admin/roles/deleted/:id
 module.exports.delete = async (req, res) => {
+  if (!res.locals.role.permissions.includes('roles_delete')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
   const id = req.params.id;
-  await Role.updateOne({ _id: id }, { deleted: true });
+  const deletedBy = {
+    account_id: res.locals.user.id,
+    deletedAt: new Date(),
+  };
+  await Role.updateOne(
+    { _id: id },
+    {
+      deleted: true,
+      $push: { deletedBy: deletedBy },
+    }
+  );
   req.flash('success', 'Xóa thành công!');
   res.redirect(`${systemConfig.prefixAdmin}/roles`);
 };
@@ -114,6 +151,10 @@ module.exports.permission = async (req, res) => {
 
 // [PATCH] admin/roles/permission
 module.exports.permissionPatch = async (req, res) => {
+  if (!res.locals.role.permissions.includes('roles_permissions')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
   try {
     const permissions = JSON.parse(req.body.permissions);
     for (const item of permissions) {
@@ -124,4 +165,30 @@ module.exports.permissionPatch = async (req, res) => {
     req.flash('error', 'Lỗi!');
   }
   res.redirect(`${systemConfig.prefixAdmin}/roles`);
+};
+
+// [PATCH] /admin/roles/change-multi
+module.exports.changeMulti = async (req, res) => {
+  if (!res.locals.role.permissions.includes('roles_delete')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+  try {
+    const ids = req.body.ids.split(', ');
+    const deletedBy = {
+      account_id: res.locals.user.id,
+      deletedAt: new Date(),
+    };
+    await Role.updateMany(
+      { _id: { $in: ids } },
+      {
+        deleted: true,
+        deletedBy: deletedBy,
+      }
+    );
+    req.flash('success', `Xóa ${ids.length} nhóm quyền thành công!`);
+  } catch (error) {
+    req.flash('error', 'Lỗi');
+  }
+  res.redirect(req.get('Referrer') || '/');
 };

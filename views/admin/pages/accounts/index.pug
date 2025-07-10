@@ -1,42 +1,74 @@
 extends ../../layouts/default.pug
 
 include ../../mixins/alert.pug
+include ../../mixins/form-change-multi.pug
+include ../../mixins/moment.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/search.pug
+include ../../mixins/sortItem.pug
 
 block main
   if (role.permissions.includes('accounts_view')) 
     +alert-success(5000)
     +alert-error(5000)
-    
+
     h1(class="mb-4") Danh sách tài khoản
+
+    .card.mb-3
+      .card-header Bộ lọc và Tìm kiếm
+      .card-body
+        .row
+          .col-6
+            +filterStatus(filterStatus)
+
+          .col-6
+            +search(keyword)
 
     .card.mb-3
       .card-header Danh sách
       .card-body
         .row
-          .col-8
-          .col-4.text-right
-            if (role.permissions.includes('accounts_create')) 
-              a(
-                href=`${prefixAdmin}/accounts/create`
-                class="btn btn-outline-success"
-              ) + Thêm mới
+          .col-md-6.d-flex
+            if (role.permissions.includes('accounts_edit')) 
+              +form-change-multi(`${prefixAdmin}/accounts/change-multi?_method=PATCH`, "accounts")
+
+          .col-6.d-flex
+            .ml-auto
+              if (role.permissions.includes('accounts_create')) 
+                a(
+                  href=`${prefixAdmin}/accounts/create`
+                  class="btn btn-outline-success"
+                ) + Thêm mới
 
         table(
           class="table table-hover table-sm"
+          checkbox-multi
         )
           thead
             tr
+              th
+                if (role.permissions.includes('accounts_edit'))   
+                  input(type="checkbox" name="checkall")
               th STT
               th Avatar
               th Họ tên
               th Phân quyền
               th Email
               th Trạng thái
+              th Người tạo/ thời gian tạo
+              th Người sửa/ thời gian sửa
               th Hành động
             
             tbody
               each item, index in records
                 tr
+                  td 
+                    if (role.permissions.includes('products_edit')) 
+                      input(
+                        type="checkbox" 
+                        name="id"
+                        value=item.id
+                      )
                   td #{index + 1}
                   td
                     img(
@@ -76,6 +108,17 @@ block main
                           class="badge badge-danger"
                         ) Dừng hoạt động
                   td 
+                    if (item.createdBy && item.createdBy.accountFullName)
+                      p #{item.createdBy.accountFullName}
+                      p 
+                        +formatDate(item.createdBy.createdAt)
+                  td 
+                    if (item.updatedBy && item.updatedBy.length)
+                      - const updatedBy = item.updatedBy[item.updatedBy.length - 1];
+                      p #{updatedBy.accountFullName} - #{updatedBy.titleUpdated}
+                      p 
+                        +formatDate(updatedBy.updatedAt)
+                  td 
                     a(
                       href=`${prefixAdmin}/accounts/detail/${item.id}`
                       class="btn btn-secondary btn-sm"
@@ -98,7 +141,7 @@ block main
         method="POST"
         id="form-change-status"
         data-path=`${prefixAdmin}/accounts/change-status`
-      ) 
+      )
 
     if (role.permissions.includes('accounts_delete')) 
       form(

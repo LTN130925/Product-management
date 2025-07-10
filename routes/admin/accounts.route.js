@@ -36,4 +36,6 @@ router.patch(
   accountsController.editPatch
 );
 
+router.patch('/change-multi', accountsController.changeMulti);
+
 module.exports = router;

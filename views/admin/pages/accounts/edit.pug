@@ -39,13 +39,22 @@ block main
             )
 
           div(class="form-group")
-            label(for="password") Mật khẩu *
+            label(for="password") Mật khẩu
             input(
               type="password"
               class="form-control"
               id="password"
               name="password"
             )
+            small.text-muted.d-block.mt-1
+            | Mật khẩu phải có:
+            ul.mb-0
+              li Ít nhất 1 chữ in hoa (A–Z)
+              li Ít nhất 1 chữ thường (a–z)
+              li Ít nhất 1 chữ số (0–9)
+              li Ít nhất 1 ký tự đặc biệt (@, #, !, v.v.)
+              li Không chứa khoảng trắng
+              li Độ dài từ 8 đến 16 ký tự
 
           div(class="form-group")
             label(for="phone") Số điện thoại

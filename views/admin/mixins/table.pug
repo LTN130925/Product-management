@@ -55,12 +55,12 @@ mixin table(records, route, level = 1)
             ) Dừng hoạt động
       td 
         if (route == 'trash')
-          if (item.deletedBy.account_id)
+          if (item.deletedBy && item.deletedBy.account_id)
             p #{item.deletedBy.accountFullName}
             p 
               +formatDateTime(item.deletedBy.deletedAt)
         else 
-          if (item.createdBy.account_id)
+          if (item.createdBy && item.createdBy.account_id)
             p #{item.createdBy.accountFullName}
             p 
               +formatDate(item.createdBy.createdAt)

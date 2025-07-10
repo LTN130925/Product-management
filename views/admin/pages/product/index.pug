@@ -135,14 +135,14 @@ block main
                         class="badge badge-danger"
                       ) Dừng hoạt động
                 td 
-                  if (item.createdBy.account_id)
+                  if (item.createdBy && item.createdBy.account_id)
                     p #{item.createdBy.accountFullName} 
                     p 
                       +formatDate(item.createdBy.createdAt)
                 td 
                   if (item.updatedBy && item.updatedBy.length > 0)
                     - const userUpdateBy = item.updatedBy[item.updatedBy.length - 1]
-                    p #{userUpdateBy.accountFullName} - #{userUpdateBy.titleUpdated}
+                    p #{userUpdateBy.accountFullName}
                     p 
                       +formatDateTime(userUpdateBy.updatedAt)
 

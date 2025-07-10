@@ -2,13 +2,24 @@ const md5 = require('md5');
 
 const Account = require('../../models/account.model');
 const Role = require('../../models/role.model');
+
 const systemConfig = require('../../config/system');
+const showBlogHelper = require('../../helper/showBlogCreateAndEdit');
+const filterStatusHelper = require('../../helper/filterStatus');
+const searchHelper = require('../../helper/search');
 
 // [GET] /admin/accounts
 module.exports.index = async (req, res) => {
   const find = {
     deleted: false,
   };
+
+  const filterStatus = filterStatusHelper(req.query, find);
+  const objectSearch = searchHelper(req.query);
+
+  if (objectSearch.regex) {
+    find.fullName = objectSearch.regex;
+  }
 
   const records = await Account.find(find).select('-password -token');
   for (let item of records) {
@@ -17,9 +28,14 @@ module.exports.index = async (req, res) => {
       item.titleRole = titleRole.title;
     }
   }
+
+  await showBlogHelper.showDataIndex(records);
+
   res.render('admin/pages/accounts/index', {
     titlePage: 'Trang danh sách tài khoản',
     records: records,
+    filterStatus: filterStatus,
+    keyword: objectSearch.keyword,
   });
 };
 
@@ -34,6 +50,10 @@ module.exports.create = async (req, res) => {
 
 // [POST] /admin/accounts/create
 module.exports.createPost = async (req, res) => {
+  if (!res.locals.role.permissions.includes('accounts_create')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
   try {
     const find = {
       email: req.body.email,
@@ -45,6 +65,9 @@ module.exports.createPost = async (req, res) => {
       res.redirect(req.get('Referrer') || '/');
       return;
     } else {
+      req.body.createdBy = {
+        account_id: res.locals.user.id,
+      };
       req.body.password = md5(req.body.password);
       const record = new Account(req.body);
       await record.save();
@@ -78,10 +101,28 @@ module.exports.detail = async (req, res) => {
 
 // [PATCH] /admin/accounts/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
-  console.log(req.params);
+  if (!res.locals.role.permissions.includes('accounts_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    console.log(req.params);
+    return;
+  }
+  const objectParams = {
+    status: req.params.status,
+    id: req.params.id,
+  };
+
+  const { status, id } = objectParams;
+  const updatedBy = {
+    titleUpdated: 'chính sửa trạng thái',
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
   await Account.updateOne(
-    { _id: req.params.id },
-    { status: req.params.status }
+    { _id: id },
+    {
+      status: status,
+      $push: { updatedBy: updatedBy },
+    }
   );
   req.flash('success', 'Cập nhật trang thái thành công!');
   res.redirect(req.get('Referrer') || '/');
@@ -89,8 +130,21 @@ module.exports.changeStatus = async (req, res) => {
 
 // [DELETE] /admin/accounts/delete/:id
 module.exports.delete = async (req, res) => {
-  console.log(req.params);
-  await Account.updateOne({ _id: req.params.id }, { deleted: true });
+  if (!res.locals.role.permissions.includes('accounts_delete')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+  const deletedBy = {
+    account_id: res.locals.user.id,
+    deletedAt: new Date(),
+  };
+  await Account.updateOne(
+    { _id: req.params.id },
+    {
+      deleted: true,
+      $push: { deletedBy: deletedBy },
+    }
+  );
   req.flash('success', 'Xóa tài khoản thành công!');
   res.redirect(req.get('Referrer') || '/');
 };
@@ -117,6 +171,10 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] /admin/accounts/edit/:id
 module.exports.editPatch = async (req, res) => {
+  if (!res.locals.role.permissions.includes('accounts_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
   try {
     const id = req.params.id;
     const find = {
@@ -135,12 +193,89 @@ module.exports.editPatch = async (req, res) => {
     } else {
       delete req.body.password;
     }
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      titleUpdated: 'Cập nhật tài khoản',
+      updatedAt: new Date(),
+    };
 
-    await Account.updateOne({ _id: id }, req.body);
+    await Account.updateOne(
+      { _id: id },
+      {
+        ...req.body,
+        $push: { updatedBy: updatedBy },
+      }
+    );
     req.flash('success', 'Chỉnh sửa tài khoản thành công!');
     res.redirect(`${systemConfig.prefixAdmin}/accounts`);
   } catch (error) {
     req.flash('error', 'Chỉnh sửa tài khoản thất bại!');
     res.redirect(req.get('Referrer') || '/');
   }
+};
+
+// [PATCH] /admin/accounts/change-multi
+module.exports.changeMulti = async (req, res) => {
+  if (!res.locals.role.permissions.includes('accounts_edit')) {
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
+  const objectBody = {
+    ids: req.body.ids.split(', '),
+    type: req.body.type,
+  };
+
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+
+  const { ids, type } = objectBody;
+  switch (type) {
+    case 'active':
+      updatedBy.titleUpdated = 'chỉnh sửa trang thái';
+      await Account.updateMany(
+        { _id: { $in: ids } },
+        {
+          status: type,
+          $push: { updatedBy: updatedBy },
+        }
+      );
+      req.flash(
+        'success',
+        `Cập nhật ${ids.length} bản ghi hoạt động thành công!`
+      );
+      break;
+    case 'inactive':
+      updatedBy.titleUpdated = 'chỉnh sửa trang thái';
+      await Account.updateMany(
+        { _id: { $in: ids } },
+        {
+          status: type,
+          $push: { updatedBy: updatedBy },
+        }
+      );
+      req.flash(
+        'success',
+        `Cập nhật ${ids.length} bản ghi không hoạt động thành công!`
+      );
+      break;
+    case 'delete-all':
+      await Account.updateMany(
+        { _id: { $in: ids } },
+        {
+          deleted: true,
+          deletedBy: {
+            account_id: res.locals.user.id,
+            deletedAt: new Date(),
+          },
+        }
+      );
+      req.flash('success', `Xóa ${ids.length} bản ghi thành công!`);
+      break;
+    default:
+      break;
+  }
+  res.redirect(req.get('Referrer') || '/');
 };
