@@ -4,6 +4,8 @@ const ProductCategory = require('../../models/product-category.model');
 const helperNewPrice = require('../../helper/newPrice');
 const helperGetSubCategory = require('../../helper/products-category');
 
+const systemConfig = require('../../config/system');
+
 // [GET] /products
 module.exports.index = async (req, res) => {
   let find = {
@@ -23,30 +25,35 @@ module.exports.index = async (req, res) => {
 
 // [GET] /products/detail/:slug
 module.exports.detail = async (req, res) => {
-  const find = {
-    slug: req.params.slug,
-    status: 'active',
-    deleted: false,
-  };
-
-  const product = await Product.findOne(find);
-
-  if (product.product_category_id) {
-    const productCategory = await ProductCategory.findOne({
-      _id: product.product_category_id,
+  try {
+    const find = {
+      slug: req.params.slug,
       status: 'active',
       deleted: false,
+    };
+
+    const product = await Product.findOne(find);
+
+    if (product.product_category_id) {
+      const productCategory = await ProductCategory.findOne({
+        _id: product.product_category_id,
+        status: 'active',
+        deleted: false,
+      });
+
+      product.category = productCategory;
+    }
+
+    helperNewPrice.priceNewProduct(product);
+
+    res.render('client/pages/products/detail', {
+      pageTitle: product.title,
+      product: product,
     });
-
-    product.category = productCategory;
+  } catch (error) {
+    req.flash('error', 'Lỗi!');
+    res.redirect(req.get('Referrer') || '/');
   }
-
-  helperNewPrice.priceNewProduct(product);
-
-  res.render('client/pages/products/detail', {
-    pageTitle: product.title,
-    product: product,
-  });
 };
 
 module.exports.slugCategory = async (req, res) => {

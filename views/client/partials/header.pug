@@ -35,4 +35,6 @@ header.header
               - const pathProducts = "/products"
               a(href=pathProducts) Sản phẩm
                 +sub-menu(layoutCategoryProducts, pathProducts)
+            li
+              a(href="#") Giỏ hàng (#{totalQuality ? totalQuality : 0})
             
