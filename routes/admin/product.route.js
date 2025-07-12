@@ -1,23 +1,23 @@
-const express = require("express");
-const multer = require("multer");
+const express = require('express');
+const multer = require('multer');
 
 const route = express.Router();
 
 const upload = multer();
 
-const middleware = require("../../middlewares/admin/uploadCloudinary.middleware");
-const validate = require("../../validates/admin/product.validate");
-const controllerProduct = require("../../controllers/admin/product.controller");
+const middleware = require('../../middlewares/admin/uploadCloudinary.middleware');
+const validate = require('../../validates/admin/product.validate');
+const controllerProduct = require('../../controllers/admin/product.controller');
 
 // Product page
 
-route.get("/", controllerProduct.index);
+route.get('/', controllerProduct.index);
 
-route.patch("/change-status/:status/:id", controllerProduct.changeStatus);
+route.patch('/change-status/:status/:id', controllerProduct.changeStatus);
 
-route.patch("/change-multi", controllerProduct.changeMulti);
+route.patch('/change-multi', controllerProduct.changeMulti);
 
-route.delete("/deleteItem/:id", controllerProduct.deleteItem);
+route.delete('/deleteItem/:id', controllerProduct.deleteItem);
 
 // End product page
 
@@ -25,11 +25,11 @@ route.delete("/deleteItem/:id", controllerProduct.deleteItem);
 
 // Create products page
 
-route.get("/create", controllerProduct.create);
+route.get('/create', controllerProduct.create);
 
 route.post(
-  "/create",
-  upload.single("thumbnail"),
+  '/create',
+  upload.single('thumbnail'),
   middleware.uploadCloudinary,
   validate.createPost,
   controllerProduct.createPost
@@ -39,11 +39,11 @@ route.post(
 
 // Edit product page
 
-route.get("/edit/:id", controllerProduct.edit);
+route.get('/edit/:id', controllerProduct.edit);
 
 route.patch(
-  "/edit/:id",
-  upload.single("thumbnail"),
+  '/edit/:id',
+  upload.single('thumbnail'),
   middleware.uploadCloudinary,
   validate.createPost,
   controllerProduct.editPatch
@@ -53,19 +53,19 @@ route.patch(
 
 // Trash page product
 
-route.get("/trashCan", controllerProduct.trash);
+route.get('/trashCan', controllerProduct.trash);
 
-route.patch("/trashCan/recovery/:id", controllerProduct.recovery);
+route.patch('/trashCan/recovery/:id', controllerProduct.recovery);
 
 route.patch(
-  "/trashCan/change-status/:status/:id",
+  '/trashCan/change-status/:status/:id',
   controllerProduct.changeStatus
 );
 
-route.patch("/trashCan/change-multi", controllerProduct.changeMulti);
+route.patch('/trashCan/change-multi', controllerProduct.changeMulti);
 
 route.delete(
-  "/trashCan/permanentlyDelete/:id",
+  '/trashCan/permanentlyDelete/:id',
   controllerProduct.permanentlyDelete
 );
 
@@ -73,7 +73,7 @@ route.delete(
 
 // Detail page
 
-route.get("/detail/:id", controllerProduct.detail);
+route.get('/detail/:id', controllerProduct.detail);
 
 // End detail page
 

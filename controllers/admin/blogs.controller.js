@@ -1,5 +1,5 @@
-const Product = require('../../models/product.model');
-const ProductCategory = require('../../models/product-category.model');
+const Blog = require('../../models/blog.model');
+const BlogCategory = require('../../models/blog-category.model');
 const Account = require('../../models/account.model');
 
 const filterStatusHelper = require('../../helper/filterStatus');
@@ -12,7 +12,7 @@ const showBlogDetailHelper = require('../../helper/showBlogDateDetail');
 
 const systemConfig = require('../../config/system');
 
-// [GET] /admin/products
+// [GET] /admin/blogs
 module.exports.index = async (req, res) => {
   let find = {
     deleted: false,
@@ -26,7 +26,7 @@ module.exports.index = async (req, res) => {
     find.title = objectSearch.regex;
   }
 
-  const countProduct = await Product.countDocuments(find);
+  const countBlog = await Blog.countDocuments(find);
 
   let objectPagination = paginationHelper(
     {
@@ -34,31 +34,37 @@ module.exports.index = async (req, res) => {
       currentPage: 1,
     },
     req.query,
-    countProduct
+    countBlog
   );
 
   const views = filterSort(req.query);
 
-  const products = await Product.find(find)
+  const blogs = await Blog.find(find)
     .sort(views)
     .limit(objectPagination.limitItem)
     .skip(objectPagination.skip);
 
-  // show blog data
-  await showBlogHelper.showDataIndex(products);
+  // slice description and content
+  for (const blog of blogs) {
+    blog.description = blog.description.slice(0, 100) + '...';
+    blog.content = blog.content.slice(0, 100) + '...';
+  }
 
-  res.render('admin/pages/product/index', {
-    titlePage: 'Trang quản lý sản phẩm',
-    products: products,
+  // show blog data
+  await showBlogHelper.showDataIndex(blogs);
+
+  res.render('admin/pages/blogs/index', {
+    titlePage: 'Trang quản lý bài viết',
+    blogs: blogs,
     filterStatus: filterStatus,
     keyword: objectSearch.keyword,
     pagination: objectPagination,
   });
 };
 
-// [DELETE] /admin/products/deleteItem/:id
+// [DELETE] /admin/blogs/deleteItem/:id
 module.exports.deleteItem = async (req, res) => {
-  if (res.locals.role.permissions.includes('products_delete')) {
+  if (res.locals.role.permissions.includes('blogs_delete')) {
     res.redirect(req.get('Referrer') || '/');
     return;
   }
@@ -69,7 +75,7 @@ module.exports.deleteItem = async (req, res) => {
 
   const { id } = objectParams;
 
-  await Product.updateOne(
+  await Blog.updateOne(
     { _id: id },
     {
       deleted: true,
@@ -80,28 +86,28 @@ module.exports.deleteItem = async (req, res) => {
     }
   );
 
-  req.flash('success', 'Xóa sản phẩm thành công!');
+  req.flash('success', 'Xóa bài viết thành công!');
   res.redirect(req.get('Referrer') || '/');
 };
 
-// [GET] /admin/products/create
+// [GET] /admin/blogs/create
 module.exports.create = async (req, res) => {
   const find = {
     deleted: false,
   };
 
-  const record = await ProductCategory.find(find);
+  const record = await BlogCategory.find(find);
   const category = createTreeHelper.tree(record);
 
-  res.render('admin/pages/product/create', {
-    pageTitle: 'Trang thêm mới sản phẩm',
+  res.render('admin/pages/blogs/create', {
+    pageTitle: 'Trang thêm mới bài viết',
     category: category,
   });
 };
 
-// [POST] /admin/products/create
+// [POST] /admin/blogs/create
 module.exports.createPost = async (req, res) => {
-  if (!res.locals.role.permissions.includes('products_create')) {
+  if (!res.locals.role.permissions.includes('blogs_create')) {
     res.redirect(req.get('Referrer') || '/');
     return;
   }
@@ -110,20 +116,17 @@ module.exports.createPost = async (req, res) => {
 
   const objectBody = {
     title: body.title,
-    product_category_id: body.product_category_id,
-    featured: body.featured,
+    blog_category_id: body.blog_category_id,
+    content: body.content,
     description: body.description,
-    price: +body.price,
-    discountPercentage: +body.discountPercentage,
-    stock: +body.stock,
     thumbnail: body.thumbnail,
     status: body.status,
     position: body.position,
   };
 
   if (objectBody.position === '') {
-    const countProduct = await Product.countDocuments();
-    const count = countProduct + 1;
+    const countBlog = await Blog.countDocuments();
+    const count = countBlog + 1;
     objectBody.position = count;
   } else {
     objectBody.position = +objectBody.position;
@@ -133,14 +136,14 @@ module.exports.createPost = async (req, res) => {
     account_id: res.locals.user.id,
   };
 
-  const products = new Product(objectBody);
-  await products.save();
+  const blogs = new Blog(objectBody);
+  await blogs.save();
 
-  req.flash('success', 'Tạo sản phẩm thành công!');
-  res.redirect(`${systemConfig.prefixAdmin}/products`);
+  req.flash('success', 'Tạo bài viết thành công!');
+  res.redirect(`${systemConfig.prefixAdmin}/blogs`);
 };
 
-// [GET] /admin/products/edit/:id
+// [GET] /admin/blogs/edit/:id
 module.exports.edit = async (req, res) => {
   try {
     let find = {
@@ -148,24 +151,24 @@ module.exports.edit = async (req, res) => {
       deleted: false,
     };
 
-    const productCategory = await ProductCategory.find({ deleted: false });
-    const category = createTreeHelper.tree(productCategory);
-    const product = await Product.findOne(find);
+    const blogCategory = await BlogCategory.find({ deleted: false });
+    const category = createTreeHelper.tree(blogCategory);
+    const blog = await Blog.findOne(find);
 
-    res.render('admin/pages/product/edit', {
-      pageTitle: 'Trang chỉnh sửa sản phẩm',
-      product: product,
+    res.render('admin/pages/blogs/edit', {
+      pageTitle: 'Trang chỉnh sửa bài viết',
+      blog: blog,
       category: category,
     });
   } catch (error) {
     req.flash('error', 'Lỗi id!');
-    res.redirect(`${systemConfig.prefixAdmin}/products`);
+    res.redirect(`${systemConfig.prefixAdmin}/blogs`);
   }
 };
 
-// [PATCH] /admin/products/edit/:id
+// [PATCH] /admin/blogs/edit/:id
 module.exports.editPatch = async (req, res) => {
-  if (!res.locals.role.permissions.includes('products_edit')) {
+  if (!res.locals.role.permissions.includes('blogs_edit')) {
     res.redirect(req.get('Referrer') || '/');
     return;
   }
@@ -174,12 +177,9 @@ module.exports.editPatch = async (req, res) => {
 
   const objectBody = {
     title: body.title,
-    product_category_id: body.product_category_id,
-    featured: body.featured,
+    blog_category_id: body.blog_category_id,
+    content: body.content,
     description: body.description,
-    price: +body.price,
-    discountPercentage: +body.discountPercentage,
-    stock: +body.stock,
     thumbnail: body.thumbnail,
     status: body.status,
     position: body.position,
@@ -188,28 +188,28 @@ module.exports.editPatch = async (req, res) => {
   objectBody.position = body.position === '' ? 0 : +objectBody.position;
 
   const updatedBy = {
-    titleUpdated: 'cập nhật sản phẩm',
+    titleUpdated: 'cập nhật bài viết',
     account_id: res.locals.user.id,
     updatedAt: new Date(),
   };
 
   try {
-    await Product.updateOne(
+    await Blog.updateOne(
       { _id: req.params.id },
       {
         ...objectBody,
         $push: { updatedBy: updatedBy },
       }
     );
-    req.flash('success', 'cập nhật sản phẩm thành công!');
+    req.flash('success', 'cập nhật bài viết thành công!');
   } catch (error) {
-    req.flash('error', 'cập nhật sản phẩm thất bại!');
+    req.flash('error', 'cập nhật bài viết thất bại!');
   }
 
-  res.redirect(`${systemConfig.prefixAdmin}/products`);
+  res.redirect(`${systemConfig.prefixAdmin}/blogs`);
 };
 
-// [GET] /admin/products/trashCan
+// [GET] /admin/blogs/trash
 module.exports.trash = async (req, res) => {
   let find = {
     deleted: true,
@@ -223,7 +223,7 @@ module.exports.trash = async (req, res) => {
     find.title = objectSearch.regex;
   }
 
-  const countProduct = await Product.countDocuments(find);
+  const countBlog = await Blog.countDocuments(find);
 
   let objectPagination = paginationHelper(
     {
@@ -231,34 +231,40 @@ module.exports.trash = async (req, res) => {
       currentPage: 1,
     },
     req.query,
-    countProduct
+    countBlog
   );
 
-  const products = await Product.find(find)
+  const blogs = await Blog.find(find)
     .limit(objectPagination.limitItem)
     .skip(objectPagination.skip);
 
-  for (let product of products) {
+  for (let blog of blogs) {
     const user = await Account.findOne({
-      _id: product.deletedBy.account_id,
+      _id: blog.deletedBy.account_id,
     });
     if (user) {
-      product.accountFullName = user.fullName;
+      blog.accountFullName = user.fullName;
     }
   }
 
-  res.render('admin/pages/product/trashCanProducts', {
-    pageTitle: 'Thùng rác sản phẩm',
-    products: products,
+  // slice description and content
+  for (const blog of blogs) {
+    blog.description = blog.description.slice(0, 100) + '...';
+    blog.content = blog.content.slice(0, 100) + '...';
+  }
+
+  res.render('admin/pages/blogs/trash', {
+    pageTitle: 'Thùng rác bài viết',
+    blogs: blogs,
     filterStatus: filterStatus,
     keyword: objectSearch.keyword,
     pagination: objectPagination,
   });
 };
 
-// [PATCH] /admin/products/trashCan/recovery/:id
+// [PATCH] /admin/blogs/trash/recovery/:id
 module.exports.recovery = async (req, res) => {
-  if (!res.locals.role.permissions.includes('products_edit')) {
+  if (!res.locals.role.permissions.includes('blogs_edit')) {
     res.redirect(req.get('Referrer') || '/');
     return;
   }
@@ -269,12 +275,12 @@ module.exports.recovery = async (req, res) => {
 
   const { id } = objectParams;
   const updatedBy = {
-    titleUpdated: 'khôi phục sản phẩm',
+    titleUpdated: 'khôi phục bài viết',
     account_id: res.locals.user.id,
     updatedAt: new Date(),
   };
 
-  await Product.updateOne(
+  await Blog.updateOne(
     { _id: id },
     {
       deleted: false,
@@ -282,13 +288,13 @@ module.exports.recovery = async (req, res) => {
     }
   );
 
-  req.flash('success', 'Khôi phục sản phẩm thành công!');
+  req.flash('success', 'Khôi phục bài viết thành công!');
   res.redirect(req.get('Referrer') || '/');
 };
 
-// [DELETE] /admin/products/trashCan/permanentlyDelete/:id
+// [DELETE] /admin/blogs/trash/permanentlyDelete/:id
 module.exports.permanentlyDelete = async (req, res) => {
-  if (!res.locals.role.permissions.includes('products_delete')) {
+  if (!res.locals.role.permissions.includes('blogs_delete')) {
     res.redirect(req.get('Referrer') || '/');
     return;
   }
@@ -299,17 +305,17 @@ module.exports.permanentlyDelete = async (req, res) => {
 
   const { id } = objectParams;
 
-  await Product.deleteOne({ _id: id });
+  await Blog.deleteOne({ _id: id });
 
-  req.flash('success', 'Xóa vĩnh viễn sản phẩm thành công!');
+  req.flash('success', 'Xóa vĩnh viễn bài viết thành công!');
 
   res.redirect(req.get('Referrer') || '/');
 };
 
-// [PATCH] /admin/products/trashCan/change-status/:status/:id
-// [PATCH] /admin/products/change-status/:status/:id
+// [PATCH] /admin/blogs/trash/change-status/:status/:id
+// [PATCH] /admin/blogs/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
-  if (!res.locals.role.permissions.includes('products_edit')) {
+  if (!res.locals.role.permissions.includes('blogs_edit')) {
     res.redirect(req.get('Referrer') || '/');
     return;
   }
@@ -327,7 +333,7 @@ module.exports.changeStatus = async (req, res) => {
     updatedAt: new Date(),
   };
 
-  await Product.updateOne(
+  await Blog.updateOne(
     { _id: id },
     {
       status: status,
@@ -335,14 +341,14 @@ module.exports.changeStatus = async (req, res) => {
     }
   );
 
-  req.flash('success', 'Cập nhật trạng thái sản phẩm thành công!');
+  req.flash('success', 'Cập nhật trạng thái bài viết thành công!');
   res.redirect(req.get('Referrer') || '/');
 };
 
-// [PATCH] /admin/products/trashCan/change-multi
-// [PATCH] /admin/products/change-multi
+// [PATCH] /admin/blogs/trash/change-multi
+// [PATCH] /admin/blogs/change-multi
 module.exports.changeMulti = async (req, res) => {
-  if (!res.locals.role.permissions.includes('products_edit')) {
+  if (!res.locals.role.permissions.includes('blogs_edit')) {
     res.redirect(req.get('Referrer') || '/');
     return;
   }
@@ -362,7 +368,7 @@ module.exports.changeMulti = async (req, res) => {
   switch (status) {
     case 'active':
       updatedBy.titleUpdated = 'chỉnh sửa trang thái';
-      await Product.updateMany(
+      await Blog.updateMany(
         { _id: { $in: id } },
         {
           status: 'active',
@@ -372,13 +378,13 @@ module.exports.changeMulti = async (req, res) => {
 
       req.flash(
         'success',
-        `Cập nhật trang thái ${id.length} sản phẩm thành công!`
+        `Cập nhật trang thái ${id.length} bài viết thành công!`
       );
 
       break;
     case 'inactive':
       updatedBy.titleUpdated = 'chỉnh sửa trang thái';
-      await Product.updateMany(
+      await Blog.updateMany(
         { _id: { $in: id } },
         {
           status: 'inactive',
@@ -388,12 +394,12 @@ module.exports.changeMulti = async (req, res) => {
 
       req.flash(
         'success',
-        `Cập nhật trang thái ${id.length} sản phẩm thành công!`
+        `Cập nhật trang thái ${id.length} bài viết thành công!`
       );
 
       break;
     case 'delete-all':
-      await Product.updateMany(
+      await Blog.updateMany(
         { _id: { $in: id } },
         {
           deleted: true,
@@ -404,22 +410,22 @@ module.exports.changeMulti = async (req, res) => {
         }
       );
 
-      req.flash('success', `Xóa ${id.length} sản phẩm thành công!`);
+      req.flash('success', `Xóa ${id.length} bài viết thành công!`);
 
       break;
     case 'permanentlyDelete-all':
-      await Product.deleteMany({ _id: { $in: id } });
+      await Blog.deleteMany({ _id: { $in: id } });
 
-      req.flash('success', `Xóa vĩnh viễn ${id.length} sản phẩm thành công!`);
+      req.flash('success', `Xóa vĩnh viễn ${id.length} bài viết thành công!`);
 
       break;
     case 'change-position':
-      updatedBy.titleUpdated = 'thay đổi vị trí sản phẩm';
+      updatedBy.titleUpdated = 'thay đổi vị trí bài viết';
       for (const item of id) {
         let [id, position] = item.split('-');
         position = parseInt(position);
 
-        await Product.updateOne(
+        await Blog.updateOne(
           { _id: id },
           {
             position: position,
@@ -428,12 +434,12 @@ module.exports.changeMulti = async (req, res) => {
         );
       }
 
-      req.flash('success', `Cập nhật vị trí ${id.length} sản phẩm thành công!`);
+      req.flash('success', `Cập nhật vị trí ${id.length} bài viết thành công!`);
 
       break;
     case 'recovery-all':
-      updatedBy.titleUpdated = 'phục hồi sản phẩm';
-      await Product.updateMany(
+      updatedBy.titleUpdated = 'phục hồi bài viết';
+      await Blog.updateMany(
         { _id: { $in: id } },
         {
           deleted: false,
@@ -441,8 +447,7 @@ module.exports.changeMulti = async (req, res) => {
         }
       );
 
-      req.flash('success', `Khôi phục ${id.length} sản phẩm thành công!`);
-
+      req.flash('success', `Khôi phục ${id.length} bài viết thành công!`);
       break;
     default:
       break;
@@ -451,7 +456,7 @@ module.exports.changeMulti = async (req, res) => {
   res.redirect(req.get('Referrer') || '/');
 };
 
-// [GET] /admin/products/detail/:id
+// [GET] /admin/blogs/detail/:id
 module.exports.detail = async (req, res) => {
   try {
     let find = {
@@ -459,32 +464,27 @@ module.exports.detail = async (req, res) => {
       deleted: false,
     };
 
-    const product = await Product.findOne(find);
+    const blog = await Blog.findOne(find);
 
-    product.newPrice = (
-      (product.price * (100 - product.discountPercentage)) /
-      100
-    ).toFixed(2);
-
-    if (product.product_category_id) {
-      const category = await ProductCategory.findOne({
-        _id: product.product_category_id,
+    if (blog.blog_category_id) {
+      const category = await BlogCategory.findOne({
+        _id: blog.blog_category_id,
       });
-      product.category = category.title;
+      blog.category = category.title;
     }
 
     // show create detail
-    await showBlogDetailHelper.showDetailCreate(product);
+    await showBlogDetailHelper.showDetailCreate(blog);
 
     // show edit detail
-    await showBlogDetailHelper.showDetailEdit(product);
+    await showBlogDetailHelper.showDetailEdit(blog);
 
-    res.render('admin/pages/product/detail', {
-      titlePage: product.title,
-      product: product,
+    res.render('admin/pages/blogs/detail', {
+      titlePage: blog.title,
+      blog: blog,
     });
   } catch (error) {
     req.flash('error', 'Lỗi ID!');
-    res.redirect(`${systemConfig.prefixAdmin}/products`);
+    res.redirect(`${systemConfig.prefixAdmin}/blogs`);
   }
 };

@@ -18,6 +18,12 @@ block main
         - nameModule = 'Sản phẩm'
       else if item == 'roles'
         - nameModule = 'Phân quyền'
+      else if item == 'accounts'
+        - nameModule = 'Tài khoản'
+      else if item == 'blogs' 
+        - nameModule = 'Bài viết'
+      else
+        - nameModule = 'Danh mục bài viết'
       +helperRolesDetail(record, item, nameModule)
 
   if (role.permissions.includes('roles_edit'))

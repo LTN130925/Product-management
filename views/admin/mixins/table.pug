@@ -3,7 +3,7 @@ mixin table(records, route, level = 1)
     - const prefix = Array(level + 1).join('-- ')
     tr
       td
-        if (role.permissions.includes('products-category_edit'))
+        if (role.permissions.includes('products-category_edit') || role.permissions.includes('blogs-category_edit'))
           input(
             type="checkbox"
             name="id"
@@ -27,7 +27,7 @@ mixin table(records, route, level = 1)
           name="position"
         )
       td
-        if (role.permissions.includes('products-category_edit'))
+        if (role.permissions.includes('products-category_edit') || role.permissions.includes('blogs-category_edit'))
           if(item.status == "active")
             a(
               href="javascript:;"
@@ -73,23 +73,35 @@ mixin table(records, route, level = 1)
               +formatDateTime(updatedBy.updatedAt)
       td
         if route == 'trash'
-          if (role.permissions.includes('products-category_edit'))
+          if (role.permissions.includes('products-category_edit') || role.permissions.includes('blogs-category_edit'))
             button(
               data-id=item.id
               button-recovery-item
               class="btn badge-success btn-sm"
             ) Khôi phục
         else
-          a(
-            href=`${prefixAdmin}/products-category/detail/${item.id}`
-            class="btn btn-secondary btn-sm"
-          ) Chi tiết
-          if (role.permissions.includes('products-category_edit'))
+          if (route == 'blogs-category')
             a(
-              href=`${prefixAdmin}/products-category/edit/${item.id}`
-              class="btn btn-warning btn-sm"
-            ) Sửa
-        if (role.permissions.includes('products-category_delete'))
+              href=`${prefixAdmin}/blogs-category/detail/${item.id}`
+              class="btn btn-secondary btn-sm"
+            ) Chi tiết
+          else
+            a(
+              href=`${prefixAdmin}/products-category/detail/${item.id}`
+              class="btn btn-secondary btn-sm"
+            ) Chi tiết
+          if (role.permissions.includes('products-category_edit') || role.permissions.includes('blogs-category_edit'))
+            if (route == 'blogs-category')
+              a(
+                href=`${prefixAdmin}/blogs-category/edit/${item.id}`
+                class="btn btn-warning btn-sm"
+              ) Sửa
+            else
+              a(
+                href=`${prefixAdmin}/products-category/edit/${item.id}`
+                class="btn btn-warning btn-sm"
+              ) Sửa
+        if (role.permissions.includes('products-category_delete') || role.permissions.includes('blogs-category_delete'))
           button(
             data-id=item.id
             button-delete-item
