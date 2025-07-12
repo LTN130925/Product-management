@@ -1,4 +1,4 @@
-module.exports.slugCheck = async (req, res, next) => {
+odule.exports.slugCheck = async (req, res, next) => {
   const param = req.params.slug;
 
   if (param === 'undefined') {

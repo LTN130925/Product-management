@@ -11,3 +11,18 @@ mixin product-item(item)
         .inner-price-new #{item.newPrice}$
         .inner-price-old #{item.price}$
         .inner-discount #{item.discountPercentage}%
+
+mixin blogs-item(item)
+  .col-lg-4.col-md-6.mb-4
+    .card.h-100.shadow-sm
+      a(href=`/blogs/detail/${item.slug}`)
+        img.card-img-top(
+          src=item.thumbnail,
+          alt=item.title,
+          style="height: 200px; object-fit: cover;"
+        )
+      .card-body
+        h5.card-title.mb-2 #{item.title}
+        p.card-text.text-muted !{item.description}
+        .card-footer.bg-transparent.border-0.pt-0
+        a.btn.btn-sm.btn-outline-primary(href=`/blogs/detail/${item.slug}`) Xem chi tiết

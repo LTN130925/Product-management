@@ -47,7 +47,7 @@ module.exports.detail = async (req, res) => {
     helperNewPrice.priceNewProduct(product);
 
     res.render('client/pages/products/detail', {
-      pageTitle: product.title,
+      titlePage: product.title,
       product: product,
     });
   } catch (error) {
@@ -56,6 +56,7 @@ module.exports.detail = async (req, res) => {
   }
 };
 
+// [GET] /products/:slug_category
 module.exports.slugCategory = async (req, res) => {
   try {
     const slug = req.params.slug_category;
@@ -84,6 +85,6 @@ module.exports.slugCategory = async (req, res) => {
     });
   } catch (error) {
     req.flash('error', 'không tìm thấy!');
-    res.redirect(`/products`);
+    res.redirect('/products');
   }
 };

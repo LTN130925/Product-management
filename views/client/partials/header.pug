@@ -31,10 +31,17 @@ header.header
           ul
             li 
               a(href="/") Trang chủ
+
             li(class="sub-menu")
               - const pathProducts = "/products"
               a(href=pathProducts) Sản phẩm
-                +sub-menu(layoutCategoryProducts, pathProducts)
+              +sub-menu(layoutCategoryProducts, pathProducts)
+
+            li(class="sub-menu")
+              - const pathBlogs = "/blogs"
+              a(href=pathBlogs) Bản tin
+              +sub-menu(layoutCategoryBlogs, pathBlogs)
+
             li
               a(href="#") Giỏ hàng (#{totalQuality ? totalQuality : 0})
             
