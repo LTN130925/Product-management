@@ -46,9 +46,12 @@ block main
                   td #{cart.totalPrice}$
                   td 
                     a(
-                      href=`/cart/delete/:id`
+                      href=`/cart/delete/${cart.products_id}`
                       class="btn btn-danger"
                     ) Xóa
+            else
+              tr
+                td(colspan="7" class="text-center") Giỏ hàng trống
 
         h3(class="text-right") Tổng tiền: #{carts.totalPrice}$
 
@@ -57,3 +60,4 @@ block main
               href="/checkout"
               class="btn btn-success"
             ) Thanh toán
+  script(src="/client/js/cart.js")

@@ -66,3 +66,33 @@ module.exports.addPost = async (req, res) => {
   }
   res.redirect(req.get('Referrer') || '/');
 };
+
+module.exports.delete = async (req, res) => {
+  const cartId = req.cookies.cart_id;
+  const productId = req.params.id;
+  await Cart.updateOne(
+    { _id: cartId },
+    { $pull: { products: { products_id: productId } } }
+  );
+  req.flash('success', 'xóa sản phẩm khỏi giỏ hàng thành công!');
+  res.redirect(req.get('Referrer') || '/');
+};
+
+// [GET] /cart/update/:product_id/:quantity
+module.exports.update = async (req, res) => {
+  const productId = req.params.product_id;
+  const quantity = req.params.quantity;
+  const cartId = req.cookies.cart_id;
+  const product = await Product.findOne({ _id: productId });
+  if (product.stock < quantity) {
+    req.flash('error', 'số lượng sản phẩm không đủ!');
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+  await Cart.updateOne(
+    { _id: cartId, 'products.products_id': productId },
+    { $set: { 'products.$.quantity': +quantity } }
+  );
+  req.flash('success', 'cập nhật số lượng sản phẩm thành công!');
+  res.redirect(req.get('Referrer') || '/');
+};
