@@ -16,11 +16,11 @@ const ordersSchema = new mongoose.Schema(
         discountPercentage: Number,
       },
     ],
-    status: {
-      type: String,
-      enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
-      default: 'pending',
-    },
+    // status: {
+    //   type: String,
+    //   enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+    //   default: 'pending',
+    // },
     deleted: {
       type: Boolean,
       default: false,

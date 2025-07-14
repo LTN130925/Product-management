@@ -1,31 +1,18 @@
 const Cart = require('../../models/cart.model');
 const Product = require('../../models/product.model');
 
-const newPriceHelper = require('../../helper/newPrice');
+const showDetailProductsHelper = require('../../helper/showDetailProducts');
 
 // [GET] /cart
 module.exports.index = async (req, res) => {
   const cartId = req.cookies.cart_id;
   const carts = await Cart.findOne({ _id: cartId });
-  if (carts.products.length > 0) {
-    for (let cart of carts.products) {
-      const product = await Product.findOne({ _id: cart.products_id }).select(
-        'thumbnail title price slug discountPercentage'
-      );
-      newPriceHelper.priceNewProduct(product);
-      product.newPrice = +product.newPrice;
-      cart.productInfo = product;
-      cart.totalPrice = cart.productInfo.newPrice * cart.quantity;
-    }
-  }
 
-  carts.totalPrice = carts.products.reduce((total, cart) => {
-    return total + cart.totalPrice;
-  }, 0);
+  const result = await showDetailProductsHelper.detail(carts);
 
   res.render('client/pages/cart/index', {
     titlePage: 'Giỏ hàng',
-    carts: carts,
+    carts: result,
   });
 };
 
