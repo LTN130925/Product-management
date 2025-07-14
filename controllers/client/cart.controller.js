@@ -1,4 +1,4 @@
-const Cart = require('../../models/cart.models');
+const Cart = require('../../models/cart.model');
 const Product = require('../../models/product.model');
 
 const newPriceHelper = require('../../helper/newPrice');
@@ -12,7 +12,8 @@ module.exports.index = async (req, res) => {
       const product = await Product.findOne({ _id: cart.products_id }).select(
         'thumbnail title price slug discountPercentage'
       );
-      product.newPrice = newPriceHelper.priceNewProduct(product);
+      newPriceHelper.priceNewProduct(product);
+      product.newPrice = +product.newPrice;
       cart.productInfo = product;
       cart.totalPrice = cart.productInfo.newPrice * cart.quantity;
     }

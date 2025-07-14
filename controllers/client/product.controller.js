@@ -4,8 +4,6 @@ const ProductCategory = require('../../models/product-category.model');
 const helperNewPrice = require('../../helper/newPrice');
 const helperGetSubCategory = require('../../helper/products-category');
 
-const systemConfig = require('../../config/system');
-
 // [GET] /products
 module.exports.index = async (req, res) => {
   let find = {

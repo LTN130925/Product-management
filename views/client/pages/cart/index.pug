@@ -54,10 +54,11 @@ block main
                 td(colspan="7" class="text-center") Giỏ hàng trống
 
         h3(class="text-right") Tổng tiền: #{carts.totalPrice}$
-
-          div(class="text-right mb-3")
-            a(
-              href="/checkout"
-              class="btn btn-success"
-            ) Thanh toán
+        
+          if carts.products.length > 0
+            div(class="text-right mb-3")
+              a(
+                href="/checkout"
+                class="btn btn-success"
+              ) Thanh toán
   script(src="/client/js/cart.js")
