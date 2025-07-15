@@ -6,7 +6,11 @@ const quantityValidate = require('../../validates/client/quantity.validate');
 
 route.get('/', controller.index);
 
-route.post('/add/:product_id', controller.addPost);
+route.post(
+  '/add/:product_id',
+  quantityValidate.quantityPost,
+  controller.addPost
+);
 
 route.get('/delete/:id', controller.delete);
 
