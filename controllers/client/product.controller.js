@@ -9,9 +9,12 @@ module.exports.index = async (req, res) => {
   let find = {
     status: 'active',
     deleted: false,
+    stock: { $gte: 1 },
   };
 
-  const products = await Product.find(find).sort({ position: 'desc' });
+  const products = await Product.find(find).sort({
+    position: 'desc',
+  });
 
   const newProductsNew = helperNewPrice.newPrice(products);
 

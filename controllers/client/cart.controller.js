@@ -1,5 +1,4 @@
 const Cart = require('../../models/cart.model');
-const Product = require('../../models/product.model');
 
 const showDetailProductsHelper = require('../../helper/showDetailProducts');
 
@@ -71,12 +70,6 @@ module.exports.update = async (req, res) => {
   const productId = req.params.product_id;
   const quantity = req.params.quantity;
   const cartId = req.cookies.cart_id;
-  const product = await Product.findOne({ _id: productId });
-  if (product.stock < quantity) {
-    req.flash('error', 'số lượng sản phẩm không đủ!');
-    res.redirect(req.get('Referrer') || '/');
-    return;
-  }
   await Cart.updateOne(
     { _id: cartId, 'products.products_id': productId },
     { $set: { 'products.$.quantity': +quantity } }

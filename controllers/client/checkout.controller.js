@@ -32,13 +32,29 @@ module.exports.order = async (req, res) => {
     const cart = await Cart.findOne({ _id: cartId });
     const products = [];
     for (const product of cart.products) {
+      const productInfo = await Product.findOne({
+        _id: product.products_id,
+      }).select('price discountPercentage stock title');
+
+      const result = await Product.updateOne(
+        { _id: product.products_id, stock: { $gte: product.quantity } },
+        { $inc: { stock: -product.quantity } }
+      );
+
+      if (result.modifiedCount === 0) {
+        req.flash(
+          'error',
+          `Sản phẩm "${productInfo.title}" không đủ số lượng trong kho!`
+        );
+        res.redirect('/checkout');
+        return;
+      }
+
       const objectProduct = {
         products_id: product.products_id,
         quantity: product.quantity,
       };
-      const productInfo = await Product.findOne({
-        _id: product.products_id,
-      }).select('price discountPercentage');
+
       objectProduct.price = productInfo.price;
       objectProduct.discountPercentage = productInfo.discountPercentage;
 
@@ -91,4 +107,34 @@ module.exports.success = async (req, res) => {
     order: order,
     titlePage: 'Đặt hàng thành công',
   });
+};
+
+// [POST] /checkout/cancel/:order_id
+module.exports.cancel = async (req, res) => {
+  const order_id = req.params.order_id;
+  const order = await Order.findOne({ _id: order_id });
+
+  if (!order) {
+    req.flash('error', 'Không tìm thấy đơn hàng');
+    res.redirect('/checkout/success');
+    return;
+  }
+
+  if (order.status === 'pending' || order.status === 'processing') {
+    await Order.updateOne({ _id: order_id }, { status: 'cancelled' });
+    req.flash('success', 'Hủy đơn hàng thành công');
+    for (const item of order.products) {
+      const productInfo = await Product.findOne({
+        _id: item.products_id,
+      }).select('stock');
+      await Product.updateOne(
+        { _id: item.products_id },
+        { stock: productInfo.stock + item.quantity }
+      );
+    }
+  } else {
+    req.flash('error', 'Không thể hủy đơn hàng ở trạng thái hiện tại');
+  }
+
+  res.redirect(`/checkout/success/${order_id}`);
 };

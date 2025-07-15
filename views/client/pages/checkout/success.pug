@@ -14,8 +14,15 @@ block main
 
     .row
       .col-12
-        div(class="alert alert-success")
-          | Chúc mừng bạn đã đặt hàng thành công! Chúng tôi sẽ xử lý đơn hàng trong thời gian sớm nhất.
+        if (order.status === 'pending' || order.status === 'processing')
+          div(class="alert alert-success")
+            | Chúc mừng bạn đã đặt hàng thành công! Chúng tôi sẽ xử lý đơn hàng trong thời gian sớm nhất.
+        else if (order.status === 'cancelled')
+          div(class="alert alert-danger")
+            | Đơn hàng này đã bị hủy. Nếu có thắc mắc, vui lòng liên hệ hỗ trợ.
+        else if (order.status === 'delivered')
+          div(class="alert alert-info")
+            | Đơn hàng đã hoàn thành. Cảm ơn bạn đã mua hàng!
 
         if (order)
           .row
@@ -64,4 +71,14 @@ block main
                           td #{item.totalPrice}
 
                 if (order.products.length > 0)
-                  h3(class="text-right") Tổng quan đơn hàng: #{order.totalPrice}
+                  h3(class="text-right") Tổng quan đơn hàng: #{order.totalPrice}$
+
+        if (order && (order.status === 'pending' || order.status === 'processing'))
+          form(
+            action=`/checkout/cancel/${order.id}` 
+            method="POST"
+          )
+            button(
+              class="btn btn-danger"
+              type="submit"
+            ) Hủy đơn hàng

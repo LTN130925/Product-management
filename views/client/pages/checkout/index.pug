@@ -24,7 +24,7 @@ block main
               th Số lượng
               th Tổng tiền 
           tbody
-            if carts.length && carts.products.length > 0
+            if carts.products && carts.products.length > 0
               each cart, index in carts.products
                 tr
                   td #{index + 1}

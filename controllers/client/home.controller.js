@@ -8,6 +8,7 @@ module.exports.index = async (req, res) => {
     featured: '1',
     deleted: false,
     status: 'active',
+    stock: { $gte: 1 },
   }).limit(6);
 
   // sp sản phẩm nổi bật trang chủ
@@ -17,6 +18,7 @@ module.exports.index = async (req, res) => {
   const newProducts = await Product.find({
     deleted: false,
     status: 'active',
+    stock: { $gte: 1 },
   })
     .sort({ position: 'desc' })
     .limit(6);

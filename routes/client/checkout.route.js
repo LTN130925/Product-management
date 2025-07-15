@@ -9,4 +9,6 @@ router.post('/order', checkoutController.order);
 
 router.get('/success/:order_id', checkoutController.success);
 
+router.post('/cancel/:order_id', checkoutController.cancel);
+
 module.exports = router;

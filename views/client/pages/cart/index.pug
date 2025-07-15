@@ -38,6 +38,7 @@ block main
                     input(
                       type="number"
                       name="quantity"
+                      max=cart.productInfo.stock
                       value=cart.quantity
                       min="1"
                       item-id=cart.productInfo.id

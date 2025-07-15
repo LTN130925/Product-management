@@ -3,9 +3,9 @@ const newPriceHelper = require('./newPrice');
 
 module.exports.detail = async (carts) => {
   if (carts.products.length > 0) {
-    for (let cart of carts.products) {
+    for (const cart of carts.products) {
       const product = await Product.findOne({ _id: cart.products_id }).select(
-        'thumbnail title price slug discountPercentage'
+        'thumbnail title price slug discountPercentage stock'
       );
       newPriceHelper.priceNewProduct(product);
       product.newPrice = +product.newPrice;
