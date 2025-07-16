@@ -12,4 +12,6 @@ route.get('/login', controller.login);
 
 route.post('/login', validates.loginPost, controller.loginPost);
 
+route.get('/logout', controller.logout);
+
 module.exports = route;

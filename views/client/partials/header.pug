@@ -45,12 +45,14 @@ header.header
             li
               a(href="/cart") Giỏ hàng (#{totalQuality ? totalQuality : 0})
 
-            li 
-              if (!user)
+            if (user)
+              li 
+                a(href="/user/logout") Đăng xuất
+            else
+              li 
                 a(href="/user/register") Đăng kí
-            
-            li 
-              a(href="/user/login") Đăng nhập 
+              li 
+                a(href="/user/login") Đăng nhập 
             
             li 
               a(href="/history") Lịch sử đơn hàng
