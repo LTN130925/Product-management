@@ -24,7 +24,7 @@ block main
               th Số lượng
               th Tổng tiền 
           tbody
-            if carts.products && carts.products.length > 0
+            if carts && carts.products.length > 0
               each cart, index in carts.products
                 tr
                   td #{index + 1}
@@ -40,7 +40,7 @@ block main
 
         h3(class="text-right") Tổng tiền: #{carts.totalPrice}$
 
-    if carts.products && carts.products.length > 0
+    if carts && carts.products.length > 0
       .row 
         .col-12
           .card.p-4.my-4

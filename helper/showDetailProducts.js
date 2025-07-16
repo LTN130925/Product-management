@@ -2,7 +2,7 @@ const Product = require('../models/product.model');
 const newPriceHelper = require('./newPrice');
 
 module.exports.detail = async (carts) => {
-  if (carts.products.length > 0) {
+  if (carts && carts.products.length > 0) {
     for (const cart of carts.products) {
       const product = await Product.findOne({ _id: cart.products_id }).select(
         'thumbnail title price slug discountPercentage stock'
@@ -14,9 +14,11 @@ module.exports.detail = async (carts) => {
     }
   }
 
-  carts.totalPrice = carts.products.reduce((total, cart) => {
-    return total + cart.totalPrice;
-  }, 0);
+  if (carts) {
+    carts.totalPrice = carts.products.reduce((total, cart) => {
+      return total + cart.totalPrice;
+    }, 0);
+  }
 
   return carts;
 };
