@@ -94,7 +94,7 @@ module.exports.forgotPost = async (req, res) => {
 
   // gủi mã
   const objectSendMail = {
-    from: 'từ cửa hàng thực phẩm <levana@gmail.com>',
+    from: `từ cửa hàng thực phẩm <${process.env.EMAIL_USER}>`,
     to: objectUser.email,
     subject: 'chuyển mã OTP',
     text: 'chuyển mã OTP để đổi mật khẩu',
