@@ -3,6 +3,11 @@ const Order = require('../../models/order.model');
 const helperNewProducts = require('../../helper/newPrice');
 
 module.exports.index = async (req, res) => {
+  if (!res.locals.user) {
+    req.flash('error', 'Vui lòng đăng nhập để xem lịch sử đơn hàng');
+    return res.redirect('/user/login');
+  }
+
   const orders = await Order.find({
     deleted: false,
   });

@@ -56,14 +56,14 @@ module.exports.editPatch = (req, res, next) => {
 };
 
 module.exports.editPatchPassword = async (req, res, next) => {
-  const user = await Account.findOne({ _id: res.locals.user.id });
+  const user = await Account.findOne({ token: req.cookies.token });
   if (md5(req.body.password) === user.password) {
     req.flash('error', 'mật khẩu đã cũ, hãy nhập mật khẩu mới!');
     res.redirect(req.get('Referrer') || '/');
     return;
   }
 
-  if (md5(req.body.password_check) !== md5(req.body.password)) {
+  if (req.body.password_check !== req.body.password) {
     req.flash('error', 'mật khẩu không trùng với mật khẩu xác thực!');
     res.redirect(req.get('Referrer') || '/');
     return;

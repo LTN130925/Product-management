@@ -43,3 +43,23 @@ module.exports.loginPost = (req, res, next) => {
 
   next();
 };
+
+module.exports.resetPasswordPost = (req, res, next) => {
+  if (!req.body.password) {
+    req.flash('error', 'Phải nhập đầy đủ mật khẩu!');
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+  if (!req.body.conformPassword) {
+    req.flash('error', 'Phải nhập đầy đủ mật khẩu xác thực!');
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+  if (req.body.conformPassword !== req.body.password) {
+    req.flash('error', 'mật khẩu không khớp!');
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
+  next();
+};

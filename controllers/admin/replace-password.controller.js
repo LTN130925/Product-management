@@ -12,9 +12,9 @@ module.exports.index = (req, res) => {
 // [PATCH] /admin/replace-password/edit
 module.exports.editPatch = async (req, res) => {
   try {
-    const id = res.locals.user.id;
+    const token = req.cookies.token;
     req.body.password = md5(req.body.password);
-    await Account.updateOne({ _id: id }, { password: req.body.password });
+    await Account.updateOne({ token: token }, { password: req.body.password });
     req.flash('success', 'cập nhật mật khẩu thành công!');
   } catch (error) {
     req.flash('error', 'cập nhật mật khẩu thất bại!');
