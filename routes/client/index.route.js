@@ -14,9 +14,9 @@ const middlewareUser = require('../../middlewares/client/user.middleware');
 module.exports = (app) => {
   app.use(middlewareProductsCategory.layoutProductsCategory);
 
-  app.use(middlewareCarts.cartId);
-
   app.use(middlewareUser.infoUser);
+  
+  app.use(middlewareCarts.cartId);
 
   app.use('/', homeRoutes);
 
