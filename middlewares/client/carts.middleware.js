@@ -2,7 +2,7 @@ const Cart = require('../../models/cart.model');
 
 module.exports.cartId = async (req, res, next) => {
   try {
-    let cart;
+    let cart = null;
     if (req.cookies.cart_id) {
       cart = await Cart.findOne({ _id: req.cookies.cart_id });
     }
