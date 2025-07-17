@@ -250,3 +250,26 @@
 }
 
 /* End product-detail */
+
+.user-header-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 0.5rem; /* Khoảng cách giữa avatar và tên */
+}
+
+.user-header-avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;      /* Bo tròn avatar */
+  border: 2px solid #dee2e6; /* Viền nhẹ màu xám nhạt */
+  background: #f8f9fa;     /* Nền sáng cho avatar nếu ảnh bị lỗi */
+}
+
+.user-header-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #222;
+  white-space: nowrap;     /* Không xuống dòng tên */
+}

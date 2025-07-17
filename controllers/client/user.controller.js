@@ -164,3 +164,24 @@ module.exports.resetPasswordPost = async (req, res) => {
   }
   res.redirect('/');
 };
+
+// [GET] /user/info
+module.exports.info = (req, res) => {
+  res.render('client/pages/user/info', {
+    titlePage: 'Thông tin tài khoản',
+  });
+};
+
+// [GET] /user/edit
+module.exports.edit = (req, res) => {
+  res.render('client/pages/user/edit', {
+    titlePage: 'Chỉnh sửa thông tin tài khoản',
+  });
+};
+
+// [POST] /user/edit
+module.exports.editPost = async (req, res) => {
+  await User.updateOne({ token_user: req.cookies.token_user }, req.body);
+  req.flash('success', 'Cập nhật thông tin thành công');
+  res.redirect('/user/info');
+};
