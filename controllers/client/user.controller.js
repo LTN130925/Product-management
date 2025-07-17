@@ -99,10 +99,9 @@ module.exports.forgotPost = async (req, res) => {
     subject: 'chuyển mã OTP',
     text: 'chuyển mã OTP để đổi mật khẩu',
     html: `<h1>chuyển mã OTP để đổi mật khẩu</h1>
-    <p>mã OTP: ${forgotPassword.otp}</p>
+    <p>mã OTP: <b>${forgotPassword.otp}</b></p>
     <p>vui lòng không chia sẻ mã OTP cho người khác</p>
     <p>mã OTP sẽ hết hạn sau 2 phút</p>
-    <p>mã OTP: ${forgotPassword.otp}</p>
     `,
   };
   sendMailHelper.sendMail(objectSendMail);
