@@ -18,12 +18,12 @@ block main
           .row
             .col-md-3
               select.form-control(name="status")
-                option(value="" selected=(filterStatus=='' ? 'true' : 'false')) Tất cả trạng thái
-                option(value="pending" selected=(filterStatus=='pending' ? 'true' : 'false')) Chờ xử lý
-                option(value="processing" selected=(filterStatus=='processing' ? 'true' : 'false')) Đang xử lý
-                option(value="shipped" selected=(filterStatus=='shipped' ? 'true' : 'false')) Đang giao
-                option(value="delivered" selected=(filterStatus=='delivered' ? 'true' : 'false')) Đã hoàn thành
-                option(value="cancelled" selected=(filterStatus=='cancelled' ? 'true' : 'false')) Đã hủy
+                option(value="" selected=(filterStatus=='')) Tất cả trạng thái
+                option(value="pending" selected=(filterStatus=='pending')) Chờ xử lý
+                option(value="processing" selected=(filterStatus=='processing')) Đang xử lý
+                option(value="shipped" selected=(filterStatus=='shipped')) Đang giao
+                option(value="delivered" selected=(filterStatus=='delivered')) Đã hoàn thành
+                option(value="cancelled" selected=(filterStatus=='cancelled')) Đã hủy
             .col-md-5
               input.form-control(type="text" name="keyword" placeholder="Tìm theo tên, SĐT, địa chỉ" value=keyword)
             .col-md-2
@@ -76,11 +76,11 @@ block main
                     if role.permissions.includes('checkout_edit')
                       form(action=`/admin/checkout/${order.id}/status?_method=PATCH` method="POST" style="display:inline")
                         select.form-control.form-control-sm(name="status" onchange="this.form.submit()")
-                          option(value="pending" selected=(order.status=='pending' ? 'true' : 'false')) Chờ xử lý
-                          option(value="processing" selected=(order.status=='processing' ? 'true' : 'false')) Đang xử lý
-                          option(value="shipped" selected=(order.status=='shipped' ? 'true' : 'false')) Đang giao
-                          option(value="delivered" selected=(order.status=='delivered' ? 'true' : 'false')) Đã hoàn thành
-                          option(value="cancelled" selected=(order.status=='cancelled' ? 'true' : 'false')) Đã hủy
+                          option(value="pending" selected=(order.status=='pending')) Chờ xử lý
+                          option(value="processing" selected=(order.status=='processing')) Đang xử lý
+                          option(value="shipped" selected=(order.status=='shipped')) Đang giao
+                          option(value="delivered" selected=(order.status=='delivered')) Đã hoàn thành
+                          option(value="cancelled" selected=(order.status=='cancelled')) Đã hủy
                     if role.permissions.includes('checkout_delete')
                       form(action=`/admin/checkout/${order.id}/delete?_method=DELETE` method="POST" style="display:inline" onsubmit="return confirm('Bạn chắc chắn muốn xóa đơn hàng này?');")
                         button.btn.btn-sm.btn-danger(type="submit") Xóa

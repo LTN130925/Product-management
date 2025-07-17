@@ -63,5 +63,5 @@ module.exports.updateStatus = async (req, res) => {
   } catch (error) {
     req.flash('error', 'Cập nhật trạng thái đơn hàng thất bại!');
   }
-  res.redirect(`/admin/checkout/${id}`);
+  res.redirect(`/admin/checkout`);
 };
