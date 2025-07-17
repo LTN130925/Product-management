@@ -1,6 +1,6 @@
 const Order = require('../../models/order.model');
 
-const helperNewProducts = require('../../helper/newPrice');
+const showCheckoutHelper = require('../../helper/showCheckout');
 
 module.exports.index = async (req, res) => {
   if (!res.locals.user) {
@@ -12,18 +12,7 @@ module.exports.index = async (req, res) => {
     deleted: false,
   });
 
-  if (orders.length > 0) {
-    for (const order of orders) {
-      for (const product of order.products) {
-        helperNewProducts.priceNewProduct(product);
-        product.newPrice = +product.newPrice;
-        product.totalPrice = product.newPrice * product.quantity;
-      }
-      order.totalPrice = order.products.reduce((sum, item) => {
-        return sum + item.totalPrice;
-      }, 0);
-    }
-  }
+  showCheckoutHelper.showCheckout(orders);
 
   res.render('client/pages/history/index', {
     titlePage: 'Lịch sử đơn hàng',

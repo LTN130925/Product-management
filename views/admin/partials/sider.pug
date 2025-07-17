@@ -24,7 +24,9 @@
       if (role.permissions.includes('blogs-category_view'))
         li 
           a(href=`${prefixAdmin}/blogs-category`) Danh mục bài viết
+      if (role.permissions.includes('checkout_view'))
+        li
+          a(href=`${prefixAdmin}/checkout`) Quản lý đơn hàng
       li
         a(href=`${prefixAdmin}/replace-password`) Đổi mật khẩu
-
 
