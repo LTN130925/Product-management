@@ -67,6 +67,10 @@ module.exports.order = async (req, res) => {
       products: products,
     };
 
+    if (res.locals.user) {
+      orderInfo.user_id = res.locals.user.id;
+    }
+
     const order = new Order(orderInfo);
     await order.save();
 
@@ -124,12 +128,9 @@ module.exports.cancel = async (req, res) => {
     await Order.updateOne({ _id: order_id }, { status: 'cancelled' });
     req.flash('success', 'Hủy đơn hàng thành công');
     for (const item of order.products) {
-      const productInfo = await Product.findOne({
-        _id: item.products_id,
-      }).select('stock');
       await Product.updateOne(
         { _id: item.products_id },
-        { stock: productInfo.stock + item.quantity }
+        { $inc: { stock: +item.quantity } }
       );
     }
   } else {

@@ -9,6 +9,7 @@ module.exports.index = async (req, res) => {
   }
 
   const orders = await Order.find({
+    user_id: res.locals.user.id,
     deleted: false,
   });
 

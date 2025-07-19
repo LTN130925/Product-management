@@ -4,6 +4,7 @@ const ForgotPassword = require('../../models/forgot-password.model');
 const User = require('../../models/user.model');
 
 const sendMailHelper = require('../../helper/sendMail');
+const Cart = require('../../models/cart.model');
 
 // [GET] /user/register
 module.exports.register = (req, res) => {
@@ -58,6 +59,16 @@ module.exports.loginPost = async (req, res) => {
     return res.redirect('/user/login');
   }
 
+  const cart = await Cart.findOne({
+    user_id: user.id,
+  });
+
+  if (cart) {
+    res.cookie('cart_id', cart.id);
+  } else {
+    await Cart.updateOne({ _id: req.cookies.cart_id }, { user_id: user.id });
+  }
+
   res.cookie('token_user', user.token_user);
   res.redirect('/');
 };
@@ -65,6 +76,7 @@ module.exports.loginPost = async (req, res) => {
 // [GET] /user/logout
 module.exports.logout = (req, res) => {
   res.clearCookie('token_user');
+  res.clearCookie('cart_id');
   res.redirect('/');
 };
 

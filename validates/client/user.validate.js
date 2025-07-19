@@ -19,6 +19,12 @@ module.exports.registerPost = (req, res, next) => {
     return;
   }
 
+  if (req.body.password !== req.body.confirmPassword) {
+    req.flash('error', 'Mật khẩu không khớp!');
+    res.redirect(req.get('Referrer') || '/');
+    return;
+  }
+
   if (!checkPassHelper.isValidPassword(req.body.password)) {
     req.flash('error', 'mật khẩu định dạng không đúng quy đinh!');
     res.redirect(req.get('Referrer') || '/');
