@@ -1,4 +1,5 @@
 const Order = require('../../models/order.model');
+const Product = require('../../models/product.model');
 
 const showCheckoutHelper = require('../../helper/showCheckout');
 const helperNewProducts = require('../../helper/newPrice');
@@ -58,6 +59,12 @@ module.exports.updateStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
   try {
+    if (status === 'cancelled') {
+      const order = await Order.findOne({ _id: id });
+      for (const product of order.products) {
+        await Product.updateOne({ _id: product.products_id }, { $inc: { stock: +product.quantity } });
+      }
+    }
     await Order.updateOne({ _id: id }, { status: status });
     req.flash('success', 'Cập nhật trạng thái đơn hàng thành công!');
   } catch (error) {
