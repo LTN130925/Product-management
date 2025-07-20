@@ -1,10 +1,10 @@
 const md5 = require('md5');
+const sendMailHelper = require('../../helper/sendMail');
 
 const ForgotPassword = require('../../models/forgot-password.model');
 const User = require('../../models/user.model');
 
-const sendMailHelper = require('../../helper/sendMail');
-const Cart = require('../../models/cart.model');
+const orderAndCartHelper = require('../../helper/orderAndCart');
 
 // [GET] /user/register
 module.exports.register = (req, res) => {
@@ -29,6 +29,8 @@ module.exports.registerPost = async (req, res) => {
   req.body.password = md5(req.body.password);
   const user = new User(req.body);
   await user.save();
+
+  await orderAndCartHelper.orderAndCart(user, res, req);
 
   res.cookie('token_user', user.token_user);
   res.redirect('/');
@@ -59,15 +61,7 @@ module.exports.loginPost = async (req, res) => {
     return res.redirect('/user/login');
   }
 
-  const cart = await Cart.findOne({
-    user_id: user.id,
-  });
-
-  if (cart) {
-    res.cookie('cart_id', cart.id);
-  } else {
-    await Cart.updateOne({ _id: req.cookies.cart_id }, { user_id: user.id });
-  }
+  await orderAndCartHelper.orderAndCart(user, res, req);
 
   res.cookie('token_user', user.token_user);
   res.redirect('/');
