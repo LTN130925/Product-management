@@ -9,6 +9,7 @@ const replacePassword = require('./replacePassword.route');
 const blogRoutes = require('./blogs.route');
 const blogCategoryRoutes = require('./blogs-category.route');
 const checkoutRoutes = require('./checkout.route');
+const usersRoutes = require('./users.routes');
 
 const authMiddleware = require('../../middlewares/admin/auth.middleware');
 
@@ -54,4 +55,6 @@ module.exports = (app) => {
   app.use(PATH_ADMIN + '/auth', authRoutes);
 
   app.use(PATH_ADMIN + '/checkout', authMiddleware.requireAuth, checkoutRoutes);
+
+  app.use(PATH_ADMIN + '/users', authMiddleware.requireAuth, usersRoutes);
 };

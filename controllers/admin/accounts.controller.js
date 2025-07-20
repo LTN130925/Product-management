@@ -18,7 +18,12 @@ module.exports.index = async (req, res) => {
   const objectSearch = searchHelper(req.query);
 
   if (objectSearch.regex) {
-    find.fullName = objectSearch.regex;
+    const regex = objectSearch.regex;
+    find.$or = [
+      { fullName: regex },
+      { email: regex },
+      { phone: regex },
+    ];
   }
 
   const records = await Account.find(find).select('-password -token');

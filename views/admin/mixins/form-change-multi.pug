@@ -18,7 +18,7 @@ mixin form-change-multi(path, typeChange)
               else 
                 if (role.permissions.includes('products-category_delete') || role.permissions.includes('products_delete') || role.permissions.includes('accounts_delete'))
                   option(value="delete-all") Xóa sản phẩm
-              if (typeChange != "accounts" || typeChange != "permanentlyDelete-all")
+              if (typeChange != "accounts" || typeChange != "permanentlyDelete-all" || typeChange != "users")
                 option(value="change-position") Thay đổi vị trí
             else 
               option(value="delete-all") Xóa quyền

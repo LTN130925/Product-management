@@ -24,6 +24,8 @@ block main
         - nameModule = 'Bài viết'
       else if item == 'checkout'
         - nameModule = 'Đơn hàng'
+      else if item == 'users'
+        - nameModule = 'Người dùng'
       else
         - nameModule = 'Danh mục bài viết'
       +helperRolesDetail(record, item, nameModule)
