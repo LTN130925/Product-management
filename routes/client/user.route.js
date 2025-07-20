@@ -36,6 +36,7 @@ route.get(
 
 route.post(
   '/password/reset',
+  authMiddleware.requireAuth,
   validates.resetPasswordPost,
   controller.resetPasswordPost
 );
