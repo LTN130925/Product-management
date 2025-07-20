@@ -26,7 +26,7 @@ const ordersSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    deletedAt: Date.now,
+    deletedAt: Date,
   },
   {
     timestamps: true,
