@@ -17,6 +17,9 @@ block main
         if (order.status === 'pending' || order.status === 'processing')
           div(class="alert alert-success")
             | Chúc mừng bạn đã đặt hàng thành công! Chúng tôi sẽ xử lý đơn hàng trong thời gian sớm nhất.
+            if (!user)
+              p Hãy đăng nhập để theo dõi đơn hàng
+              a(href="/user/login" class="btn btn-primary") Đăng nhập
         else if (order.status === 'cancelled')
           div(class="alert alert-danger")
             | Đơn hàng này đã bị hủy. Nếu có thắc mắc, vui lòng liên hệ hỗ trợ.
