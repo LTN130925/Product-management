@@ -26,6 +26,8 @@ block main
         - nameModule = 'Đơn hàng'
       else if item == 'users'
         - nameModule = 'Người dùng'
+      else if item == 'settings-general'
+        - nameModule = 'Cấu hình chung'
       else
         - nameModule = 'Danh mục bài viết'
       +helperRolesDetail(record, item, nameModule)

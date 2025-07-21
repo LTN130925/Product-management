@@ -6,7 +6,7 @@ header.header
       .col-3
         .inner-logo
           a(href="/")
-            img.logo(src="/client/image/logoipsum-custom-logo.svg", alt="Logo")
+            img.logo(src=settingsGeneral.logo ? settingsGeneral.logo : 'client/image/user.png', alt=settingsGeneral.websiteName)
 
       .col-4
         form(
@@ -63,6 +63,8 @@ header.header
                 a(href="/user/login") Đăng nhập 
             li
               a(href="/history") Lịch sử đơn hàng
+            li 
+              a(href="/contact") Liên hệ
             
           
             

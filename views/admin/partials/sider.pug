@@ -30,6 +30,9 @@
       if (role.permissions.includes('checkout_view'))
         li
           a(href=`${prefixAdmin}/checkout`) Quản lý đơn hàng
+      if (role.permissions.includes('settings-general_view'))
+        li
+          a(href=`${prefixAdmin}/settings/general`) Cấu hình chung
       li
         a(href=`${prefixAdmin}/replace-password`) Đổi mật khẩu
 

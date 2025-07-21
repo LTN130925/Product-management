@@ -47,27 +47,32 @@ module.exports.createPost = async (req, res) => {
 
 // [GET] /admin/roles/detail/:id
 module.exports.detail = async (req, res) => {
-  const myName = [];
-  const find = {
-    _id: req.params.id,
-    deleted: false,
-  };
-  const record = await Role.findOne(find);
+  try {
+    const myName = [];
+    const find = {
+      _id: req.params.id,
+      deleted: false,
+    };
+    const record = await Role.findOne(find);
 
-  if (record.permissions.length > 0) {
-    record.permissions.forEach((permission) => {
-      const [name] = permission.split('_');
-      if (!myName.includes(name)) {
-        myName.push(name);
-      }
+    if (record.permissions.length > 0) {
+      record.permissions.forEach((permission) => {
+        const [name] = permission.split('_');
+        if (!myName.includes(name)) {
+          myName.push(name);
+        }
+      });
+    }
+
+    res.render('admin/pages/roles/detail', {
+      titlePage: 'Chi tiết quyền',
+      record: record,
+      arrayModuleName: myName,
     });
+  } catch (error) {
+    req.flash('error', 'ID tồn tại!');
+    res.redirect(`${systemConfig.prefixAdmin}/roles`);
   }
-
-  res.render('admin/pages/roles/detail', {
-    titlePage: 'Chi tiết quyền',
-    record: record,
-    arrayModuleName: myName,
-  });
 };
 
 // [GET] /admin/roles/edit/:id
