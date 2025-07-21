@@ -61,6 +61,13 @@ app.use(methodOverride('_method'));
 routeClient(app);
 routeAdmin(app);
 
+// error 404
+app.use((req, res) => {
+  res.status(404).render('client/pages/errors/404', {
+    titlePage: '404 Not Found',
+  });
+})
+
 app.listen(port, () => {
   console.log(`App listening on port ${port}...`);
 });
